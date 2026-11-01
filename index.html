@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEM - DAILY QUEST</title>
+    <style>
+        :root {
+            --bg-color: #080a0f;
+            --panel-bg: rgba(16, 23, 38, 0.95);
+            --primary: #00f3ff;
+            --danger: #ff0055;
+            --success: #00ff88;
+            --text: #e0f7fc;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .quest-card {
+            background: var(--panel-bg);
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .player-profile {
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid var(--primary);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .player-name-container {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .player-name-container:hover {
+            color: var(--primary);
+        }
+
+        .rank-badge {
+            background: var(--primary);
+            color: #000;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .xp-bar-bg {
+            background: rgba(255, 255, 255, 0.1);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .xp-bar-fill {
+            background: var(--primary);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        select, input[type="text"] {
+            background: #0d1322;
+            border: 1px solid var(--primary);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: inherit;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .add-task-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .btn-add {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 4px;
+            gap: 8px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-action {
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-check { background: var(--success); color: #000; }
+        .btn-cross { background: var(--danger); color: #fff; }
+
+        .penalty-section {
+            border-top: 2px dashed var(--danger);
+            padding-top: 15px;
+            margin-top: 20px;
+        }
+
+        .penalty-title {
+            color: var(--danger);
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .timer {
+            text-align: center;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+<div class="quest-card">
+    <!-- Profil Alanı -->
+    <div class="player-profile">
+        <div>
+            <div class="player-name-container" onclick="changePlayerName()" title="Tıkla ve İsmi Değiştir">
+                <span id="playerNameDisplay" style="font-weight: bold;">AVCI</span>
+                <span>✏️</span>
+            </div>
+            <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">
+                LVL <span id="lvlDisplay">1</span> | XP: <span id="xpDisplay">0</span>/100
+            </div>
+        </div>
+        <span class="rank-badge" id="rankDisplay">E-RANK</span>
+    </div>
+    
+    <div class="xp-bar-bg">
+        <div class="xp-bar-fill" id="xpBar"></div>
+    </div>
+
+    <h2 style="font-size: 1.1rem; color: var(--primary); margin-top: 15px;">[DAILY QUEST]</h2>
+    <div class="timer" id="timer">REMAINING TIME: --:--:--</div>
+
+    <!-- Hafta Seçimi -->
+    <label style="font-size: 0.8rem; opacity: 0.8;">Antrenman Programı Modu:</label>
+    <select id="programSelect" onchange="changeProgram()">
+        <option value="w1_2">1. ve 2. Hafta: Temel Adaptasyon</option>
+        <option value="w3_4">3. ve 4. Hafta: Hacim Artışı</option>
+        <option value="w5_6">5. ve 6. Hafta: Eşik Atlama</option>
+        <option value="w7_8">7. ve 8. Hafta: Zirve ve Test</option>
+    </select>
+
+    <!-- Özel Görev Ekleme -->
+    <div class="add-task-box">
+        <input type="text" id="customTaskInput" placeholder="Özel görev ekle (Örn: 3L Su İç)..." style="margin-bottom: 0;">
+        <button class="btn-add" onclick="addCustomTask()">EKLE</button>
+    </div>
+
+    <!-- Günlük Görev Listesi -->
+    <ul class="task-list" id="taskList"></ul>
+
+    <!-- Ceza / Borç Havuzu -->
+    <div class="penalty-section">
+        <div class="penalty-title">[BIRIKEN BORÇ / CEZA HAVUZU]</div>
+        <ul class="task-list" id="penaltyList"></ul>
+    </div>
+</div>
+
+<script>
+    const presets = {
+        w1_2: [
+            "Şınav: 12 - 10 - 10 - 8 - Maks",
+            "Negatif Barfiks: 4 set x 5 tekrar",
+            "Mekik: 3 set x 15 tekrar",
+            "Squat: 4 set x 20 tekrar"
+        ],
+        w3_4: [
+            "Şınav: 18 - 15 - 12 - 10 - Maks",
+            "Avustralya + Negatif Barfiks: 3x8 / 3x5",
+            "Mekik: 4 set x 20 tekrar",
+            "Squat: 4 set x 25 tekrar"
+        ],
+        w5_6: [
+            "Şınav: 15 - 20 - 25 - 20 - Maks",
+            "Nizami + Negatif Barfiks: 4 set",
+            "Mekik: 4 set x 25 tekrar",
+            "Squat: 4 set x 30 tekrar"
+        ],
+        w7_8: [
+            "Şınav: 35 - 25 - 20 - 15 - Maks",
+            "Nizami Barfiks: 4 set (Maks)",
+            "Mekik: 4 set x 30 tekrar",
+            "Squat: 4 set x 35 tekrar"
+        ]
+    };
+
+    let appData = JSON.parse(localStorage.getItem('solo_quest_v2')) || {
+        playerName: 'Cihan',
+        level: 1,
+        xp: 0,
+        program: 'w1_2',
+        customTasks: [],
+        completedToday: [],
+        penaltyPool: []
+    };
+
+    function save() {
+        localStorage.setItem('solo_quest_v2', JSON.stringify(appData));
+        render();
+    }
+
+    function changePlayerName() {
+        const newName = prompt("Oyuncu / Avcı Adınızı Girin:", appData.playerName || "Cihan");
+        if (newName && newName.trim() !== "") {
+            appData.playerName = newName.trim();
+            save();
+        }
+    }
+
+    function getRank(level) {
+        if (level >= 25) return "S-RANK";
+        if (level >= 18) return "A-RANK";
+        if (level >= 12) return "B-RANK";
+        if (level >= 7)  return "C-RANK";
+        if (level >= 4)  return "D-RANK";
+        return "E-RANK";
+    }
+
+    function addXP(amount) {
+        appData.xp += amount;
+        if (appData.xp >= 100) {
+            appData.level += Math.floor(appData.xp / 100);
+            appData.xp = appData.xp % 100;
+            alert(`🎉 LEVEL UP! Yeni Seviye: ${appData.level} (${getRank(appData.level)})`);
+        }
+        save();
+    }
+
+    function changeProgram() {
+        appData.program = document.getElementById('programSelect').value;
+        save();
+    }
+
+    function addCustomTask() {
+        const input = document.getElementById('customTaskInput');
+        if (input.value.trim() !== '') {
+            appData.customTasks.push(input.value.trim());
+            input.value = '';
+            save();
+        }
+    }
+
+    function completeTask(taskText) {
+        if (!appData.completedToday.includes(taskText)) {
+            appData.completedToday.push(taskText);
+            addXP(25);
+        }
+    }
+
+    function failTask(taskText) {
+        if (!appData.penaltyPool.includes(taskText)) {
+            appData.penaltyPool.push(taskText);
+            save();
+        }
+    }
+
+    function clearPenalty(taskText) {
+        appData.penaltyPool = appData.penaltyPool.filter(t => t !== taskText);
+        addXP(15);
+    }
+
+    function render() {
+        document.getElementById('playerNameDisplay').innerText = appData.playerName || 'AVCI';
+        document.getElementById('lvlDisplay').innerText = appData.level;
+        document.getElementById('xpDisplay').innerText = appData.xp;
+        document.getElementById('xpBar').style.width = appData.xp + '%';
+        document.getElementById('rankDisplay').innerText = getRank(appData.level);
+        document.getElementById('programSelect').value = appData.program;
+
+        // Günlük Görevler
+        const activePreset = presets[appData.program] || [];
+        const allCurrentTasks = [...activePreset, ...appData.customTasks];
+        const taskList = document.getElementById('taskList');
+        taskList.innerHTML = '';
+
+        allCurrentTasks.forEach(task => {
+            const isCompleted = appData.completedToday.includes(task);
+            const li = document.createElement('li');
+            li.className = 'task-item';
+            li.style.opacity = isCompleted ? '0.5' : '1';
+
+            li.innerHTML = `
+                <span style="${isCompleted ? 'text-decoration: line-through;' : ''}">${task}</span>
+                <div class="task-actions">
+                    ${!isCompleted ? `
+                        <button class="btn-action btn-check" onclick="completeTask('${task}')">✔</button>
+                        <button class="btn-action btn-cross" onclick="failTask('${task}')">✖</button>
+                    ` : '<span style="color:var(--success); font-weight:bold;">TAMAMLANDI</span>'}
+                </div>
+            `;
+            taskList.appendChild(li);
+        });
+
+        // Ceza Havuzu
+        const penaltyList = document.getElementById('penaltyList');
+        penaltyList.innerHTML = '';
+        if (appData.penaltyPool.length === 0) {
+            penaltyList.innerHTML = '<li style="font-size:0.85rem; opacity:0.6;">Biriken borç veya ceza yok. Harika!</li>';
+        } else {
+            appData.penaltyPool.forEach(task => {
+                const li = document.createElement('li');
+                li.className = 'task-item';
+                li.style.borderLeft = '3px solid var(--danger)';
+                li.innerHTML = `
+                    <span>${task}</span>
+                    <button class="btn-action btn-check" onclick="clearPenalty('${task}')" title="Borcu Öde">ÖDE</button>
+                `;
+                penaltyList.appendChild(li);
+            });
+        }
+    }
+
+    function updateTimer() {
+        const now = new Date();
+        const midnight = new Date();
+        midnight.setHours(24, 0, 0, 0);
+        const diff = midnight - now;
+
+        const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0');
+        const minutes = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+        const seconds = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+        document.getElementById('timer').innerText = `REMAINING TIME: ${hours}:${minutes}:${seconds}`;
+    }
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
+    render();
+</script>
+
+</body>
+</html>
