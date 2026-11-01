@@ -371,6 +371,19 @@
             cursor: pointer;
         }
 
+        .btn-notify-perm {
+            width: 100%;
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px dashed var(--primary-cyan);
+            color: var(--primary-cyan);
+            padding: 8px;
+            border-radius: 4px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
         .caution-box {
             border: 1px solid var(--danger-red);
             background: rgba(255, 0, 85, 0.08);
@@ -402,6 +415,81 @@
             text-decoration: underline dotted;
         }
 
+        /* ANIME HOLOGRAM POPUP MODAL */
+        .system-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .system-modal-card {
+            background: rgba(6, 20, 45, 0.95);
+            border: 2px solid var(--primary-cyan);
+            box-shadow: 0 0 30px var(--glow-cyan);
+            border-radius: 10px;
+            max-width: 400px;
+            width: 100%;
+            padding: 25px;
+            text-align: center;
+            animation: modalGlow 2s infinite alternate;
+        }
+
+        .system-modal-card.warning {
+            border-color: var(--danger-red);
+            box-shadow: 0 0 30px var(--glow-red);
+        }
+
+        @keyframes modalGlow {
+            0% { box-shadow: 0 0 15px var(--glow-cyan); }
+            100% { box-shadow: 0 0 35px var(--glow-cyan); }
+        }
+
+        .modal-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-title {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            color: var(--primary-cyan);
+            margin-bottom: 15px;
+        }
+
+        .system-modal-card.warning .modal-title {
+            color: var(--danger-red);
+        }
+
+        .modal-body {
+            font-size: 1rem;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .btn-modal-close {
+            background: var(--primary-cyan);
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--primary-cyan);
+        }
+
         .hidden { display: none !important; }
     </style>
 </head>
@@ -420,6 +508,9 @@
         <h1 class="window-title" id="questMainTitle">[ DAILY QUEST ]</h1>
         <div class="quest-sub-header">PREPARE TO BECOME POWERFUL</div>
         <div class="timer-display" id="timerDisplay">REMAINING TIME: --:--:--</div>
+
+        <!-- Notification Permission Button -->
+        <button class="btn-notify-perm" id="btnNotifyPerm" onclick="requestNotificationPermission()">🔔 ENABLE DEVICE NOTIFICATIONS</button>
 
         <!-- Workout Program Selector -->
         <label style="font-size:0.85rem; color:var(--text-dim); display:block; margin-bottom:4px;">PROGRAM MODE:</label>
@@ -543,6 +634,16 @@
 
 </div>
 
+<!-- HOLOGRAM POPUP MODAL -->
+<div class="system-modal-overlay hidden" id="systemModal">
+    <div class="system-modal-card" id="systemModalCard">
+        <div class="modal-icon" id="modalIcon">📩</div>
+        <div class="modal-title" id="modalTitle">[ NOTIFICATION ]</div>
+        <div class="modal-body" id="modalBody">A new Daily Quest has arrived.</div>
+        <button class="btn-modal-close" onclick="closeSystemModal()">ACCEPT</button>
+    </div>
+</div>
+
 <script>
     function playBeep(freq = 800, type = 'sine', duration = 0.15) {
         try {
@@ -597,7 +698,7 @@
         return new Date().toISOString().split('T')[0];
     }
 
-    let state = JSON.parse(localStorage.getItem('solo_system_v5')) || {
+    let state = JSON.parse(localStorage.getItem('solo_system_v6')) || {
         playerName: 'Cihan',
         level: 1,
         xp: 0,
@@ -607,8 +708,50 @@
         customTasks: [],
         completedToday: [],
         penaltyPool: [],
-        lastActiveDate: getTodayString()
+        lastActiveDate: getTodayString(),
+        warned2Hours: false
     };
+
+    // System Notification Functions
+    function triggerSystemNotification(title, body, isWarning = false) {
+        // Hologram Modal
+        const overlay = document.getElementById('systemModal');
+        const card = document.getElementById('systemModalCard');
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalBody').innerText = body;
+        document.getElementById('modalIcon').innerText = isWarning ? '⚠️' : '📩';
+        
+        card.classList.toggle('warning', isWarning);
+        overlay.classList.remove('hidden');
+
+        playBeep(isWarning ? 300 : 900, isWarning ? 'sawtooth' : 'sine', 0.4);
+
+        // Web Notification (Device level)
+        if ("Notification" in window && Notification.permission === "granted") {
+            new Notification(title, {
+                body: body,
+                icon: 'https://cdn-icons-png.flaticon.com/512/2583/2583319.png'
+            });
+        }
+    }
+
+    function closeSystemModal() {
+        playBeep(600, 'sine', 0.1);
+        document.getElementById('systemModal').classList.add('hidden');
+    }
+
+    function requestNotificationPermission() {
+        if ("Notification" in window) {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    document.getElementById('btnNotifyPerm').innerText = "✅ DEVICE NOTIFICATIONS ACTIVE";
+                    document.getElementById('btnNotifyPerm').style.borderColor = "var(--success-green)";
+                    document.getElementById('btnNotifyPerm').style.color = "var(--success-green)";
+                    triggerSystemNotification("[ SYSTEM ]", "Device notifications activated successfully!");
+                }
+            });
+        }
+    }
 
     function checkDayRollover() {
         const today = getTodayString();
@@ -630,19 +773,21 @@
                 }
             });
 
-            if (failedCount > 0) {
-                playBeep(200, 'sawtooth', 0.5);
-                alert(`🚨 SYSTEM WARNING!\nYou failed to complete ${failedCount} goal(s) before midnight. Unfinished tasks were moved to the PENALTY QUEUE!`);
-            }
-
             state.completedToday = [];
             state.lastActiveDate = today;
+            state.warned2Hours = false;
             saveState();
+
+            if (failedCount > 0) {
+                triggerSystemNotification("🚨 [ PENALTY ASSIGNED ]", `You failed to complete ${failedCount} quest(s). Moved to Penalty Queue!`, true);
+            } else {
+                triggerSystemNotification("📩 [ NEW QUEST HAS ARRIVED ]", "A new Daily Quest is ready. Prepare to train!");
+            }
         }
     }
 
     function saveState() {
-        localStorage.setItem('solo_system_v5', JSON.stringify(state));
+        localStorage.setItem('solo_system_v6', JSON.stringify(state));
         render();
     }
 
@@ -674,7 +819,7 @@
     function checkJobUnlock() {
         if (state.level >= 20 && state.job === 'None') {
             state.job = 'Shadow Monarch';
-            alert("🔥 JOB CHANGE UNLOCKED: You are now the [Shadow Monarch]!");
+            triggerSystemNotification("🔥 JOB CHANGE UNLOCKED", "You are now the [Shadow Monarch]!");
         } else if (state.level >= 10 && state.job === 'None') {
             state.job = 'Necromancer';
         }
@@ -686,15 +831,13 @@
         if (state.xp >= 100) {
             state.level += Math.floor(state.xp / 100);
             state.xp = state.xp % 100;
-            // Level up bonus stats
             state.stats.str += 1;
             state.stats.vit += 1;
             state.stats.agi += 1;
             state.stats.int += 1;
             state.stats.per += 1;
             checkJobUnlock();
-            playBeep(1200, 'sawtooth', 0.4);
-            alert(`⚡ LEVEL UP! Current Level: ${state.level}\nAll Stats Increased by +1!`);
+            triggerSystemNotification("⚡ LEVEL UP!", `Current Level: ${state.level}\nAll Stats Increased by +1!`);
         }
         saveState();
     }
@@ -718,19 +861,13 @@
         if (!state.completedToday.includes(taskText)) {
             state.completedToday.push(taskText);
             
-            // Apply Stat Rewards
-            let rewardMsg = [];
             if (rewardObj) {
                 for (let statKey in rewardObj) {
                     state.stats[statKey] = (state.stats[statKey] || 10) + rewardObj[statKey];
-                    rewardMsg.push(`+${rewardObj[statKey]} ${statKey.toUpperCase()}`);
                 }
             }
 
             addXP(25);
-            if (rewardMsg.length > 0) {
-                alert(`🎯 TASK CLEARED!\nStats Increased: ${rewardMsg.join(', ')}`);
-            }
         }
     }
 
@@ -767,47 +904,38 @@
     }
 
     function render() {
-        // Status Values
         document.getElementById('statusName').innerText = state.playerName;
         document.getElementById('statusLevel').innerText = state.level;
         document.getElementById('statusJob').innerText = state.job;
         document.getElementById('statusTitle').innerText = getRankTitle(state.level);
 
-        // XP Bar
         document.getElementById('barFillXP').style.width = state.xp + '%';
         document.getElementById('barTextXP').innerText = `${state.xp}/100`;
 
-        // HP & MP calculations
         const maxHP = state.stats.vit * 10;
         const maxMP = state.stats.int * 2;
         document.getElementById('barTextHP').innerText = `${maxHP}/${maxHP}`;
         document.getElementById('barTextMP').innerText = `${maxMP}/${maxMP}`;
 
-        // Stats Matrix
         document.getElementById('valSTR').innerText = state.stats.str;
         document.getElementById('valVIT').innerText = state.stats.vit;
         document.getElementById('valAGI').innerText = state.stats.agi;
         document.getElementById('valINT').innerText = state.stats.int;
         document.getElementById('valPER').innerText = state.stats.per;
 
-        // Program Selector
         document.getElementById('programSelect').value = state.program;
 
-        // Render Main Goals
         const mainTasks = mainPresets[state.program] || [];
         const mainContainer = document.getElementById('mainTaskList');
         mainContainer.innerHTML = '';
         mainTasks.forEach(t => renderTaskItem(t, mainContainer));
 
-        // Render Custom Tasks inside Main Goals
         state.customTasks.forEach(t => renderTaskItem(t, mainContainer));
 
-        // Render Side Quests
         const sideContainer = document.getElementById('sideTaskList');
         sideContainer.innerHTML = '';
         sidePresets.forEach(t => renderTaskItem(t, sideContainer));
 
-        // Penalty Task List
         const penaltyTaskList = document.getElementById('penaltyTaskList');
         penaltyTaskList.innerHTML = '';
         if (state.penaltyPool.length === 0) {
@@ -824,6 +952,12 @@
                 penaltyTaskList.appendChild(li);
             });
         }
+
+        if ("Notification" in window && Notification.permission === "granted") {
+            document.getElementById('btnNotifyPerm').innerText = "✅ DEVICE NOTIFICATIONS ACTIVE";
+            document.getElementById('btnNotifyPerm').style.borderColor = "var(--success-green)";
+            document.getElementById('btnNotifyPerm').style.color = "var(--success-green)";
+        }
     }
 
     function updateTimer() {
@@ -834,6 +968,13 @@
 
         if (diff <= 0) {
             checkDayRollover();
+        }
+
+        // Less than 2 hours warning check (7200000 ms)
+        if (diff <= 7200000 && !state.warned2Hours) {
+            state.warned2Hours = true;
+            saveState();
+            triggerSystemNotification("⚠️ [ WARNING: TIME IS RUNNING OUT ]", "Less than 2 hours remaining to complete today's Daily Quest!", true);
         }
 
         const h = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0');
