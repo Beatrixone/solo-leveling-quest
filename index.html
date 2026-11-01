@@ -222,6 +222,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            width: 100%;
+            justify-content: space-between;
         }
 
         .attr-name {
@@ -237,42 +239,10 @@
             color: #fff;
         }
 
-        .btn-plus {
-            background: var(--primary-cyan);
-            color: #000;
-            border: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            cursor: pointer;
-            box-shadow: 0 0 8px var(--primary-cyan);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.1s;
-        }
-
-        .btn-plus:active { transform: scale(0.9); }
-        .btn-plus:disabled {
-            background: #1d3342;
-            color: #4a6878;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        .ability-points-banner {
-            text-align: center;
-            background: rgba(255, 204, 0, 0.1);
-            border: 1px solid var(--gold-yellow);
-            color: var(--gold-yellow);
-            padding: 8px;
-            border-radius: 6px;
+        .stat-auto-tag {
+            font-size: 0.75rem;
+            color: var(--success-green);
             font-family: 'Share Tech Mono', monospace;
-            font-size: 0.95rem;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
         }
 
         /* QUEST SCREEN STYLES */
@@ -315,6 +285,7 @@
             color: var(--success-green);
             letter-spacing: 2px;
             font-size: 1.1rem;
+            margin-top: 15px;
             margin-bottom: 10px;
         }
 
@@ -337,14 +308,20 @@
             align-items: center;
         }
 
+        .task-text-container {
+            display: flex;
+            flex-direction: column;
+        }
+
         .task-text {
-            font-size: 1rem;
+            font-size: 0.98rem;
             font-weight: 600;
         }
 
-        .task-actions {
-            display: flex;
-            gap: 6px;
+        .task-stat-reward {
+            font-size: 0.75rem;
+            color: var(--gold-yellow);
+            font-family: 'Share Tech Mono', monospace;
         }
 
         .btn-act {
@@ -366,16 +343,10 @@
             box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
         }
 
-        .btn-act-fail {
-            background: var(--danger-red);
-            color: #fff;
-            box-shadow: 0 0 8px rgba(255, 0, 85, 0.4);
-        }
-
         .add-custom-box {
             display: flex;
             gap: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .custom-input {
@@ -461,16 +432,19 @@
 
         <!-- Custom Task Adder -->
         <div class="add-custom-box">
-            <input type="text" class="custom-input" id="customTaskInput" placeholder="Add custom goal (e.g., Drink 3L Water)...">
+            <input type="text" class="custom-input" id="customTaskInput" placeholder="Add custom goal...">
             <button class="btn-add-task" onclick="addCustomTask()">ADD</button>
         </div>
 
-        <div class="goals-title">🎯 GOALS</div>
-        <ul class="task-list" id="dailyTaskList"></ul>
+        <div class="goals-title">🎯 MAIN WORKOUT GOALS</div>
+        <ul class="task-list" id="mainTaskList"></ul>
+
+        <div class="goals-title" style="color: var(--gold-yellow);">➕ SIDE QUESTS</div>
+        <ul class="task-list" id="sideTaskList"></ul>
 
         <!-- Caution Banner -->
         <div class="caution-box">
-            ⚠️ <b>CAUTION!</b> IF THE DAILY QUEST REMAINS INCOMPLETE, PENALTIES WILL BE GIVEN ACCORDINGLY.
+            ⚠️ <b>CAUTION!</b> IF THE DAILY QUEST REMAINS INCOMPLETE AT MIDNIGHT, PENALTIES WILL BE ASSIGNED AUTOMATICALLY.
         </div>
 
         <!-- Penalty Queue -->
@@ -494,11 +468,6 @@
                 <div class="job-title-row">JOB: <span class="val-highlight" id="statusJob">None</span></div>
                 <div class="job-title-row">TITLE: <span class="val-highlight" id="statusTitle">E-Rank Hunter</span></div>
             </div>
-        </div>
-
-        <!-- Available Ability Points -->
-        <div class="ability-points-banner" id="apBanner">
-            AVAILABLE ABILITY POINTS: <b id="availableAP">0</b>
         </div>
 
         <!-- Vital Stats Bars -->
@@ -541,38 +510,33 @@
         <div class="attributes-grid">
             <div class="attr-card">
                 <div class="attr-info">
-                    <span class="attr-name">STR</span>
+                    <span class="attr-name">STR <span class="stat-auto-tag">[POWER]</span></span>
                     <span class="attr-value" id="valSTR">10</span>
                 </div>
-                <button class="btn-plus" id="btnSTR" onclick="allocateStat('str')">+</button>
             </div>
             <div class="attr-card">
                 <div class="attr-info">
-                    <span class="attr-name">VIT</span>
+                    <span class="attr-name">VIT <span class="stat-auto-tag">[HEALTH]</span></span>
                     <span class="attr-value" id="valVIT">10</span>
                 </div>
-                <button class="btn-plus" id="btnVIT" onclick="allocateStat('vit')">+</button>
             </div>
             <div class="attr-card">
                 <div class="attr-info">
-                    <span class="attr-name">AGI</span>
+                    <span class="attr-name">AGI <span class="stat-auto-tag">[SPEED]</span></span>
                     <span class="attr-value" id="valAGI">10</span>
                 </div>
-                <button class="btn-plus" id="btnAGI" onclick="allocateStat('agi')">+</button>
             </div>
             <div class="attr-card">
                 <div class="attr-info">
-                    <span class="attr-name">INT</span>
+                    <span class="attr-name">INT <span class="stat-auto-tag">[MANA]</span></span>
                     <span class="attr-value" id="valINT">10</span>
                 </div>
-                <button class="btn-plus" id="btnINT" onclick="allocateStat('int')">+</button>
             </div>
             <div class="attr-card" style="grid-column: span 2;">
                 <div class="attr-info">
-                    <span class="attr-name">PER</span>
+                    <span class="attr-name">PER <span class="stat-auto-tag">[SENSE]</span></span>
                     <span class="attr-value" id="valPER">10</span>
                 </div>
-                <button class="btn-plus" id="btnPER" onclick="allocateStat('per')">+</button>
             </div>
         </div>
     </div>
@@ -580,7 +544,6 @@
 </div>
 
 <script>
-    // Audio FX using Web Audio API
     function playBeep(freq = 800, type = 'sine', duration = 0.15) {
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -597,48 +560,89 @@
         } catch(e) {}
     }
 
-    const presets = {
+    const mainPresets = {
         w1_2: [
-            "Push-ups: 12 - 10 - 10 - 8 - Max",
-            "Neg. Pull-ups: 4 sets x 5 reps",
-            "Sit-ups: 3 sets x 15 reps",
-            "Squats: 4 sets x 20 reps"
+            { text: "Push-ups: 12 - 10 - 10 - 8 - Max", reward: { str: 1 } },
+            { text: "Neg. Pull-ups: 4 sets x 5 reps", reward: { str: 1, vit: 1 } },
+            { text: "Sit-ups: 3 sets x 15 reps", reward: { vit: 1 } },
+            { text: "Squats: 4 sets x 20 reps", reward: { str: 1 } }
         ],
         w3_4: [
-            "Push-ups: 18 - 15 - 12 - 10 - Max",
-            "Australian + Neg. Pull-ups: 3x8 / 3x5",
-            "Sit-ups: 4 sets x 20 reps",
-            "Squats: 4 sets x 25 reps"
+            { text: "Push-ups: 18 - 15 - 12 - 10 - Max", reward: { str: 2 } },
+            { text: "Australian + Neg. Pull-ups: 3x8 / 3x5", reward: { str: 1, vit: 1 } },
+            { text: "Sit-ups: 4 sets x 20 reps", reward: { vit: 1 } },
+            { text: "Squats: 4 sets x 25 reps", reward: { str: 2 } }
         ],
         w5_6: [
-            "Push-ups: 15 - 20 - 25 - 20 - Max",
-            "Clean Pull-up + Negatives: 4 sets",
-            "Sit-ups: 4 sets x 25 reps",
-            "Squats: 4 sets x 30 reps"
+            { text: "Push-ups: 15 - 20 - 25 - 20 - Max", reward: { str: 2 } },
+            { text: "Clean Pull-up + Negatives: 4 sets", reward: { str: 2, vit: 1 } },
+            { text: "Sit-ups: 4 sets x 25 reps", reward: { vit: 2 } },
+            { text: "Squats: 4 sets x 30 reps", reward: { str: 2 } }
         ],
         w7_8: [
-            "Push-ups: 35 - 25 - 20 - 15 - Max",
-            "Clean Pull-ups: 4 sets (Max)",
-            "Sit-ups: 4 sets x 30 reps",
-            "Squats: 4 sets x 35 reps"
+            { text: "Push-ups: 35 - 25 - 20 - 15 - Max", reward: { str: 3 } },
+            { text: "Clean Pull-ups: 4 sets (Max)", reward: { str: 3, vit: 2 } },
+            { text: "Sit-ups: 4 sets x 30 reps", reward: { vit: 2 } },
+            { text: "Squats: 4 sets x 35 reps", reward: { str: 3 } }
         ]
     };
 
-    let state = JSON.parse(localStorage.getItem('solo_system_v3')) || {
+    const sidePresets = [
+        { text: "Hydration: Drink 3.5L Water", reward: { vit: 2 } },
+        { text: "Supplements: Protein + Creatine + Vitamins", reward: { str: 1, vit: 1 } },
+        { text: "Daily Walk: 10,000 Steps Target", reward: { agi: 2 } }
+    ];
+
+    function getTodayString() {
+        return new Date().toISOString().split('T')[0];
+    }
+
+    let state = JSON.parse(localStorage.getItem('solo_system_v5')) || {
         playerName: 'Cihan',
         level: 1,
         xp: 0,
-        ap: 0,
         job: 'None',
         stats: { str: 10, vit: 10, agi: 10, int: 10, per: 10 },
         program: 'w1_2',
         customTasks: [],
         completedToday: [],
-        penaltyPool: []
+        penaltyPool: [],
+        lastActiveDate: getTodayString()
     };
 
+    function checkDayRollover() {
+        const today = getTodayString();
+        if (state.lastActiveDate !== today) {
+            const currentPreset = mainPresets[state.program] || [];
+            const allYesterdayTasks = [
+                ...currentPreset.map(t => t.text),
+                ...sidePresets.map(t => t.text),
+                ...state.customTasks.map(t => t.text)
+            ];
+            
+            let failedCount = 0;
+            allYesterdayTasks.forEach(taskText => {
+                if (!state.completedToday.includes(taskText)) {
+                    if (!state.penaltyPool.includes(taskText)) {
+                        state.penaltyPool.push(taskText);
+                        failedCount++;
+                    }
+                }
+            });
+
+            if (failedCount > 0) {
+                playBeep(200, 'sawtooth', 0.5);
+                alert(`🚨 SYSTEM WARNING!\nYou failed to complete ${failedCount} goal(s) before midnight. Unfinished tasks were moved to the PENALTY QUEUE!`);
+            }
+
+            state.completedToday = [];
+            state.lastActiveDate = today;
+            saveState();
+        }
+    }
+
     function saveState() {
-        localStorage.setItem('solo_system_v3', JSON.stringify(state));
+        localStorage.setItem('solo_system_v5', JSON.stringify(state));
         render();
     }
 
@@ -682,21 +686,17 @@
         if (state.xp >= 100) {
             state.level += Math.floor(state.xp / 100);
             state.xp = state.xp % 100;
-            state.ap += 3;
+            // Level up bonus stats
+            state.stats.str += 1;
+            state.stats.vit += 1;
+            state.stats.agi += 1;
+            state.stats.int += 1;
+            state.stats.per += 1;
             checkJobUnlock();
             playBeep(1200, 'sawtooth', 0.4);
-            alert(`⚡ LEVEL UP! Current Level: ${state.level}\n+3 Ability Points granted!`);
+            alert(`⚡ LEVEL UP! Current Level: ${state.level}\nAll Stats Increased by +1!`);
         }
         saveState();
-    }
-
-    function allocateStat(statKey) {
-        if (state.ap > 0) {
-            state.ap--;
-            state.stats[statKey]++;
-            playBeep(1000, 'triangle', 0.1);
-            saveState();
-        }
     }
 
     function onProgramChange() {
@@ -707,25 +707,30 @@
     function addCustomTask() {
         const input = document.getElementById('customTaskInput');
         if (input.value.trim() !== '') {
-            state.customTasks.push(input.value.trim());
+            state.customTasks.push({ text: input.value.trim(), reward: { str: 1, vit: 1 } });
             input.value = '';
             playBeep(700, 'sine', 0.1);
             saveState();
         }
     }
 
-    function completeTask(taskText) {
+    function completeTask(taskText, rewardObj) {
         if (!state.completedToday.includes(taskText)) {
             state.completedToday.push(taskText);
-            addXP(25);
-        }
-    }
+            
+            // Apply Stat Rewards
+            let rewardMsg = [];
+            if (rewardObj) {
+                for (let statKey in rewardObj) {
+                    state.stats[statKey] = (state.stats[statKey] || 10) + rewardObj[statKey];
+                    rewardMsg.push(`+${rewardObj[statKey]} ${statKey.toUpperCase()}`);
+                }
+            }
 
-    function failTask(taskText) {
-        if (!state.penaltyPool.includes(taskText)) {
-            state.penaltyPool.push(taskText);
-            playBeep(300, 'sawtooth', 0.3);
-            saveState();
+            addXP(25);
+            if (rewardMsg.length > 0) {
+                alert(`🎯 TASK CLEARED!\nStats Increased: ${rewardMsg.join(', ')}`);
+            }
         }
     }
 
@@ -734,13 +739,39 @@
         addXP(15);
     }
 
+    function renderTaskItem(taskObj, containerEl) {
+        const isDone = state.completedToday.includes(taskObj.text);
+        const li = document.createElement('li');
+        li.className = 'task-item';
+        if (isDone) li.style.opacity = '0.5';
+
+        let rewardStr = [];
+        if (taskObj.reward) {
+            for (let k in taskObj.reward) {
+                rewardStr.push(`+${taskObj.reward[k]} ${k.toUpperCase()}`);
+            }
+        }
+
+        li.innerHTML = `
+            <div class="task-text-container">
+                <span class="task-text" style="${isDone ? 'text-decoration: line-through;' : ''}">${taskObj.text}</span>
+                <span class="task-stat-reward">${rewardStr.join(' | ')}</span>
+            </div>
+            <div class="task-actions">
+                ${!isDone ? `
+                    <button class="btn-act btn-act-check" onclick='completeTask("${taskObj.text}", ${JSON.stringify(taskObj.reward)})'>✔</button>
+                ` : '<span style="color:var(--success-green); font-family: Share Tech Mono; font-weight:bold;">CLEARED</span>'}
+            </div>
+        `;
+        containerEl.appendChild(li);
+    }
+
     function render() {
         // Status Values
         document.getElementById('statusName').innerText = state.playerName;
         document.getElementById('statusLevel').innerText = state.level;
         document.getElementById('statusJob').innerText = state.job;
         document.getElementById('statusTitle').innerText = getRankTitle(state.level);
-        document.getElementById('availableAP').innerText = state.ap;
 
         // XP Bar
         document.getElementById('barFillXP').style.width = state.xp + '%';
@@ -759,38 +790,22 @@
         document.getElementById('valINT').innerText = state.stats.int;
         document.getElementById('valPER').innerText = state.stats.per;
 
-        // Stat Plus Buttons State
-        ['str', 'vit', 'agi', 'int', 'per'].forEach(key => {
-            const btn = document.getElementById(`btn${key.toUpperCase()}`);
-            btn.disabled = state.ap <= 0;
-        });
-
         // Program Selector
         document.getElementById('programSelect').value = state.program;
 
-        // Daily Task List
-        const currentPreset = presets[state.program] || [];
-        const fullTaskList = [...currentPreset, ...state.customTasks];
-        const dailyTaskList = document.getElementById('dailyTaskList');
-        dailyTaskList.innerHTML = '';
+        // Render Main Goals
+        const mainTasks = mainPresets[state.program] || [];
+        const mainContainer = document.getElementById('mainTaskList');
+        mainContainer.innerHTML = '';
+        mainTasks.forEach(t => renderTaskItem(t, mainContainer));
 
-        fullTaskList.forEach(task => {
-            const isDone = state.completedToday.includes(task);
-            const li = document.createElement('li');
-            li.className = 'task-item';
-            if (isDone) li.style.opacity = '0.5';
+        // Render Custom Tasks inside Main Goals
+        state.customTasks.forEach(t => renderTaskItem(t, mainContainer));
 
-            li.innerHTML = `
-                <span class="task-text" style="${isDone ? 'text-decoration: line-through;' : ''}">${task}</span>
-                <div class="task-actions">
-                    ${!isDone ? `
-                        <button class="btn-act btn-act-check" onclick="completeTask('${task}')">✔</button>
-                        <button class="btn-act btn-act-fail" onclick="failTask('${task}')">✖</button>
-                    ` : '<span style="color:var(--success-green); font-family: Share Tech Mono; font-weight:bold;">CLEARED</span>'}
-                </div>
-            `;
-            dailyTaskList.appendChild(li);
-        });
+        // Render Side Quests
+        const sideContainer = document.getElementById('sideTaskList');
+        sideContainer.innerHTML = '';
+        sidePresets.forEach(t => renderTaskItem(t, sideContainer));
 
         // Penalty Task List
         const penaltyTaskList = document.getElementById('penaltyTaskList');
@@ -798,13 +813,13 @@
         if (state.penaltyPool.length === 0) {
             penaltyTaskList.innerHTML = '<li style="font-size:0.85rem; color:var(--text-dim); text-align:center;">No pending penalties. Keep it up!</li>';
         } else {
-            state.penaltyPool.forEach(task => {
+            state.penaltyPool.forEach(taskText => {
                 const li = document.createElement('li');
                 li.className = 'task-item';
                 li.style.borderColor = 'var(--danger-red)';
                 li.innerHTML = `
-                    <span class="task-text" style="color:#ff88a5">${task}</span>
-                    <button class="btn-act btn-act-check" onclick="payPenalty('${task}')">PAY</button>
+                    <span class="task-text" style="color:#ff88a5">${taskText}</span>
+                    <button class="btn-act btn-act-check" onclick="payPenalty('${taskText}')">PAY</button>
                 `;
                 penaltyTaskList.appendChild(li);
             });
@@ -817,12 +832,17 @@
         midnight.setHours(24, 0, 0, 0);
         const diff = midnight - now;
 
+        if (diff <= 0) {
+            checkDayRollover();
+        }
+
         const h = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0');
         const m = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
         const s = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
         document.getElementById('timerDisplay').innerText = `REMAINING TIME: ${h}:${m}:${s}`;
     }
 
+    checkDayRollover();
     setInterval(updateTimer, 1000);
     updateTimer();
     render();
