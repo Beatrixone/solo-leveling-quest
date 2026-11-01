@@ -1,14 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SYSTEM - SOLO LEVELING WORKOUT</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom Sci-Fi HUD Styles -->
     <style>
         :root {
             --bg-color: #030712;
-            --panel-bg: rgba(6, 18, 38, 0.88);
+            --panel-bg: rgba(6, 18, 38, 0.92);
             --primary-cyan: #00f3ff;
             --glow-cyan: rgba(0, 243, 255, 0.4);
             --danger-red: #ff0055;
@@ -23,18 +32,20 @@
         * {
             box-sizing: border-box;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-color);
             background-image: 
-                radial-gradient(circle at 50% 20%, rgba(0, 243, 255, 0.12) 0%, transparent 60%),
+                radial-gradient(circle at 50% 15%, rgba(0, 243, 255, 0.15) 0%, transparent 65%),
+                radial-gradient(circle at 80% 85%, rgba(255, 0, 85, 0.08) 0%, transparent 50%),
                 linear-gradient(to bottom, #02050e, #050d1a);
             color: var(--text-main);
             font-family: 'Rajdhani', sans-serif;
             min-height: 100vh;
             margin: 0;
-            padding: 15px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -42,34 +53,79 @@
 
         .system-container {
             width: 100%;
-            max-width: 480px;
+            max-width: 500px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 14px;
         }
 
-        /* Nav Tabs */
+        /* SYNC HEADER BANNER */
+        .sync-banner {
+            background: rgba(4, 16, 33, 0.9);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 6px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--gold-yellow);
+        }
+
+        .sync-dot.online {
+            background: var(--success-green);
+            box-shadow: 0 0 8px var(--success-green);
+            animation: pulse 2s infinite;
+        }
+
+        .sync-dot.offline {
+            background: var(--danger-red);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* NAVIGATION TABS */
         .nav-tabs {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             width: 100%;
         }
 
         .tab-btn {
             flex: 1;
-            background: rgba(8, 28, 54, 0.8);
+            background: rgba(8, 28, 54, 0.85);
             border: 1px solid var(--primary-cyan);
             color: var(--primary-cyan);
-            padding: 10px;
+            padding: 10px 4px;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1rem;
+            font-size: 0.88rem;
             font-weight: bold;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 6px;
             text-transform: uppercase;
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.15);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
             transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         .tab-btn.active {
@@ -79,50 +135,45 @@
             border-width: 2px;
         }
 
-        /* Hologram Cards */
+        /* SYSTEM HOLOGRAM WINDOW */
         .system-window {
             background: var(--panel-bg);
             border: 2px solid var(--primary-cyan);
-            box-shadow: var(--border-glow), inset 0 0 20px rgba(0, 243, 255, 0.1);
-            border-radius: 8px;
-            padding: 20px;
+            box-shadow: var(--border-glow), inset 0 0 20px rgba(0, 243, 255, 0.08);
+            border-radius: 10px;
+            padding: 18px;
             position: relative;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
         }
 
-        /* Header / Title */
         .window-title {
             text-align: center;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             letter-spacing: 3px;
             color: var(--primary-cyan);
             text-shadow: 0 0 10px var(--primary-cyan);
             border-bottom: 1px solid rgba(0, 243, 255, 0.3);
-            padding-bottom: 10px;
+            padding-bottom: 8px;
             margin-top: 0;
-            margin-bottom: 15px;
+            margin-bottom: 14px;
             text-transform: uppercase;
         }
 
-        /* STATUS SCREEN STYLES */
+        /* STATUS TAB STYLES */
         .status-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            background: rgba(0, 243, 255, 0.05);
+            margin-bottom: 14px;
+            background: rgba(0, 243, 255, 0.04);
             padding: 10px 14px;
             border-radius: 6px;
             border: 1px dashed rgba(0, 243, 255, 0.3);
         }
 
-        .player-level-box {
-            text-align: center;
-        }
-
         .level-number {
-            font-size: 3rem;
+            font-size: 3.2rem;
             font-family: 'Share Tech Mono', monospace;
             font-weight: bold;
             color: #fff;
@@ -131,9 +182,10 @@
         }
 
         .level-label {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--primary-cyan);
             letter-spacing: 2px;
+            font-family: 'Share Tech Mono', monospace;
         }
 
         .job-title-box {
@@ -142,7 +194,7 @@
         }
 
         .job-title-row {
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .val-highlight {
@@ -151,12 +203,16 @@
             text-shadow: 0 0 8px var(--primary-cyan);
         }
 
-        /* Bars (HP, MP, Fatigue) */
+        .player-name-edit {
+            cursor: pointer;
+            border-bottom: 1px dotted var(--primary-cyan);
+        }
+
         .stat-bar-group {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .stat-bar-container {
@@ -200,12 +256,11 @@
             color: var(--text-dim);
         }
 
-        /* Attribute Matrix (STR, AGI, VIT, INT, PER) */
         .attributes-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 15px;
+            gap: 10px;
+            margin-bottom: 10px;
         }
 
         .attr-card {
@@ -213,15 +268,11 @@
             border: 1px solid rgba(0, 243, 255, 0.25);
             padding: 10px 12px;
             border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .attr-info {
             display: flex;
             align-items: center;
-            gap: 8px;
             width: 100%;
             justify-content: space-between;
         }
@@ -229,7 +280,7 @@
         .attr-name {
             font-family: 'Share Tech Mono', monospace;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--primary-cyan);
         }
 
@@ -240,31 +291,32 @@
         }
 
         .stat-auto-tag {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--success-green);
             font-family: 'Share Tech Mono', monospace;
+            display: block;
         }
 
-        /* QUEST SCREEN STYLES */
+        /* QUEST TAB STYLES */
         .quest-sub-header {
             text-align: center;
             color: var(--gold-yellow);
             font-family: 'Share Tech Mono', monospace;
             letter-spacing: 2px;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             margin-bottom: 10px;
         }
 
         .timer-display {
             text-align: center;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: var(--primary-cyan);
             background: rgba(0, 243, 255, 0.05);
             padding: 8px;
-            border-radius: 4px;
+            border-radius: 6px;
             border: 1px solid rgba(0, 243, 255, 0.2);
-            margin-bottom: 15px;
+            margin-bottom: 14px;
         }
 
         .program-selector {
@@ -272,45 +324,48 @@
             background: #08162b;
             border: 1px solid var(--primary-cyan);
             color: var(--text-main);
-            padding: 10px;
-            border-radius: 4px;
+            padding: 9px;
+            border-radius: 6px;
             font-family: 'Rajdhani', sans-serif;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 14px;
+            outline: none;
         }
 
         .goals-title {
             font-family: 'Share Tech Mono', monospace;
             color: var(--success-green);
             letter-spacing: 2px;
-            font-size: 1.1rem;
-            margin-top: 15px;
-            margin-bottom: 10px;
+            font-size: 1.05rem;
+            margin-top: 14px;
+            margin-bottom: 8px;
         }
 
         .task-list {
             list-style: none;
             padding: 0;
-            margin: 0 0 15px 0;
+            margin: 0 0 12px 0;
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
         .task-item {
-            background: rgba(12, 32, 60, 0.7);
+            background: rgba(12, 32, 60, 0.75);
             border: 1px solid rgba(0, 243, 255, 0.2);
             padding: 10px 12px;
             border-radius: 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 8px;
         }
 
         .task-text-container {
             display: flex;
             flex-direction: column;
+            flex: 1;
         }
 
         .task-text {
@@ -319,7 +374,7 @@
         }
 
         .task-stat-reward {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--gold-yellow);
             font-family: 'Share Tech Mono', monospace;
         }
@@ -346,7 +401,7 @@
         .add-custom-box {
             display: flex;
             gap: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .custom-input {
@@ -354,10 +409,11 @@
             background: #08162b;
             border: 1px solid rgba(0, 243, 255, 0.4);
             color: #fff;
-            padding: 10px;
-            border-radius: 4px;
+            padding: 9px;
+            border-radius: 6px;
             font-family: 'Rajdhani', sans-serif;
             font-size: 0.95rem;
+            outline: none;
         }
 
         .btn-add-task {
@@ -367,21 +423,8 @@
             padding: 0 16px;
             font-weight: bold;
             font-family: 'Share Tech Mono', monospace;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-        }
-
-        .btn-notify-perm {
-            width: 100%;
-            background: rgba(0, 243, 255, 0.1);
-            border: 1px dashed var(--primary-cyan);
-            color: var(--primary-cyan);
-            padding: 8px;
-            border-radius: 4px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.85rem;
-            cursor: pointer;
-            margin-bottom: 15px;
         }
 
         .caution-box {
@@ -390,32 +433,88 @@
             padding: 10px;
             border-radius: 6px;
             text-align: center;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: #ff88a5;
             font-family: 'Share Tech Mono', monospace;
-            line-height: 1.3;
+            line-height: 1.35;
         }
 
         .penalty-pool-box {
-            margin-top: 20px;
+            margin-top: 16px;
             border-top: 2px dashed var(--danger-red);
-            padding-top: 15px;
+            padding-top: 12px;
         }
 
         .penalty-pool-title {
             color: var(--danger-red);
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        /* HISTORY & SYNC LINK STYLES */
+        .history-card {
+            background: rgba(8, 24, 48, 0.8);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            padding: 12px;
+            border-radius: 6px;
             margin-bottom: 10px;
         }
 
-        .player-name-edit {
-            cursor: pointer;
-            text-decoration: underline dotted;
+        .history-date {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--primary-cyan);
+            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+            padding-bottom: 4px;
         }
 
-        /* ANIME HOLOGRAM POPUP MODAL */
+        .history-tasks {
+            list-style: none;
+            padding-left: 10px;
+            margin: 0;
+            font-size: 0.88rem;
+            color: var(--text-main);
+        }
+
+        .history-tasks li { margin-bottom: 3px; }
+
+        .sync-link-card {
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px dashed var(--primary-cyan);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 15px;
+        }
+
+        .sync-link-title {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--gold-yellow);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .sync-input-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn-sync {
+            background: rgba(0, 243, 255, 0.2);
+            border: 1px solid var(--primary-cyan);
+            color: #fff;
+            padding: 8px 12px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* HOLOGRAM POPUP MODAL */
         .system-modal-overlay {
             position: fixed;
             top: 0;
@@ -438,43 +537,28 @@
             border-radius: 10px;
             max-width: 400px;
             width: 100%;
-            padding: 25px;
+            padding: 24px;
             text-align: center;
-            animation: modalGlow 2s infinite alternate;
-        }
-
-        .system-modal-card.warning {
-            border-color: var(--danger-red);
-            box-shadow: 0 0 30px var(--glow-red);
-        }
-
-        @keyframes modalGlow {
-            0% { box-shadow: 0 0 15px var(--glow-cyan); }
-            100% { box-shadow: 0 0 35px var(--glow-cyan); }
         }
 
         .modal-icon {
             font-size: 3rem;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .modal-title {
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.3rem;
-            letter-spacing: 2px;
+            font-size: 1.25rem;
             color: var(--primary-cyan);
-            margin-bottom: 15px;
-        }
-
-        .system-modal-card.warning .modal-title {
-            color: var(--danger-red);
+            margin-bottom: 12px;
+            letter-spacing: 2px;
         }
 
         .modal-body {
-            font-size: 1rem;
-            line-height: 1.4;
             margin-bottom: 20px;
             color: #fff;
+            font-size: 0.98rem;
+            line-height: 1.4;
         }
 
         .btn-modal-close {
@@ -485,7 +569,7 @@
             font-family: 'Share Tech Mono', monospace;
             font-size: 1rem;
             font-weight: bold;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             box-shadow: 0 0 10px var(--primary-cyan);
         }
@@ -496,24 +580,33 @@
 <body>
 
 <div class="system-container">
+
+    <!-- REALTIME SYNC STATUS BANNER -->
+    <div class="sync-banner">
+        <div class="sync-status">
+            <span class="sync-dot" id="syncDot"></span>
+            <span id="syncText">CLOUD: INITIALIZING...</span>
+        </div>
+        <button onclick="toggleAudio()" id="audioBtn" style="background:none; border:none; color:var(--primary-cyan); cursor:pointer; font-family:'Share Tech Mono'; font-size:0.8rem;">
+            🔊 SOUND: ON
+        </button>
+    </div>
     
-    <!-- Tab Navigation -->
+    <!-- NAVIGATION TABS -->
     <div class="nav-tabs">
-        <button class="tab-btn active" id="tabBtnQuest" onclick="switchTab('quest')">📜 QUEST</button>
-        <button class="tab-btn" id="tabBtnStatus" onclick="switchTab('status')">📊 STATUS</button>
+        <button class="tab-btn active" id="tabBtnQuest" onclick="switchTab('quest')"><i class="fa-solid fa-scroll"></i> QUEST</button>
+        <button class="tab-btn" id="tabBtnStatus" onclick="switchTab('status')"><i class="fa-solid fa-chart-simple"></i> STATUS</button>
+        <button class="tab-btn" id="tabBtnHistory" onclick="switchTab('history')"><i class="fa-solid fa-calendar-days"></i> HISTORY</button>
     </div>
 
     <!-- QUEST WINDOW -->
     <div class="system-window" id="windowQuest">
-        <h1 class="window-title" id="questMainTitle">[ DAILY QUEST ]</h1>
+        <h1 class="window-title">[ DAILY QUEST ]</h1>
         <div class="quest-sub-header">PREPARE TO BECOME POWERFUL</div>
         <div class="timer-display" id="timerDisplay">REMAINING TIME: --:--:--</div>
 
-        <!-- Notification Permission Button -->
-        <button class="btn-notify-perm" id="btnNotifyPerm" onclick="requestNotificationPermission()">🔔 ENABLE DEVICE NOTIFICATIONS</button>
-
         <!-- Workout Program Selector -->
-        <label style="font-size:0.85rem; color:var(--text-dim); display:block; margin-bottom:4px;">PROGRAM MODE:</label>
+        <label style="font-size:0.82rem; color:var(--text-dim); display:block; margin-bottom:4px; font-family:'Share Tech Mono';">PROGRAM MODE:</label>
         <select class="program-selector" id="programSelect" onchange="onProgramChange()">
             <option value="w1_2">Weeks 1-2: Adaptation (4 Sets Neg. Pull-ups)</option>
             <option value="w3_4">Weeks 3-4: Volume Build (Australian + Neg.)</option>
@@ -555,7 +648,7 @@
                 <div class="level-label">LEVEL</div>
             </div>
             <div class="job-title-box">
-                <div class="job-title-row">NAME: <span class="val-highlight player-name-edit" onclick="editPlayerName()" id="statusName">Cihan</span> ✏️</div>
+                <div class="job-title-row">NAME: <span class="val-highlight player-name-edit" onclick="editPlayerName()" id="statusName">Hunter</span> ✏️</div>
                 <div class="job-title-row">JOB: <span class="val-highlight" id="statusJob">None</span></div>
                 <div class="job-title-row">TITLE: <span class="val-highlight" id="statusTitle">E-Rank Hunter</span></div>
             </div>
@@ -563,41 +656,29 @@
 
         <!-- Vital Stats Bars -->
         <div class="stat-bar-group">
-            <!-- XP Bar -->
             <div class="stat-bar-container">
                 <div class="stat-bar-label" style="color:var(--success-green)">EXP</div>
-                <div class="stat-bar-bg">
-                    <div class="stat-bar-fill fill-xp" id="barFillXP" style="width: 0%"></div>
-                </div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill fill-xp" id="barFillXP" style="width: 0%"></div></div>
                 <div class="stat-bar-text" id="barTextXP">0/100</div>
             </div>
-            <!-- HP Bar -->
             <div class="stat-bar-container">
                 <div class="stat-bar-label" style="color:#ff0055">HP</div>
-                <div class="stat-bar-bg">
-                    <div class="stat-bar-fill fill-hp" id="barFillHP" style="width: 100%"></div>
-                </div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill fill-hp" id="barFillHP" style="width: 100%"></div></div>
                 <div class="stat-bar-text" id="barTextHP">100/100</div>
             </div>
-            <!-- MP Bar -->
             <div class="stat-bar-container">
                 <div class="stat-bar-label" style="color:#00f3ff">MP</div>
-                <div class="stat-bar-bg">
-                    <div class="stat-bar-fill fill-mp" id="barFillMP" style="width: 100%"></div>
-                </div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill fill-mp" id="barFillMP" style="width: 100%"></div></div>
                 <div class="stat-bar-text" id="barTextMP">10/10</div>
             </div>
-            <!-- Fatigue Bar -->
             <div class="stat-bar-container">
                 <div class="stat-bar-label" style="color:#ffcc00">FATIGUE</div>
-                <div class="stat-bar-bg">
-                    <div class="stat-bar-fill fill-fatigue" id="barFillFatigue" style="width: 0%"></div>
-                </div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill fill-fatigue" id="barFillFatigue" style="width: 0%"></div></div>
                 <div class="stat-bar-text" id="barTextFatigue">0</div>
             </div>
         </div>
 
-        <!-- Attribute Matrix (STR, AGI, VIT, INT, PER) -->
+        <!-- Attribute Matrix -->
         <div class="attributes-grid">
             <div class="attr-card">
                 <div class="attr-info">
@@ -632,35 +713,79 @@
         </div>
     </div>
 
+    <!-- HISTORY & DEVICE SYNC LINK WINDOW -->
+    <div class="system-window hidden" id="windowHistory">
+        <h1 class="window-title">[ WORKOUT HISTORY ]</h1>
+        <div id="historyLogList"></div>
+
+        <!-- DEVICE LINKING / CLOUD KEY -->
+        <div class="sync-link-card">
+            <div class="sync-link-title">🔗 CROSS-DEVICE SYNC KEY</div>
+            <div style="font-size:0.8rem; color:var(--text-dim); margin-bottom:8px;">
+                Use this Hunter Key to sync your progress live across Phone, Tablet, and PC:
+            </div>
+            <div style="font-family:'Share Tech Mono'; font-size:1rem; color:#fff; word-break:break-all; background:rgba(0,0,0,0.4); padding:8px; border-radius:4px;" id="userSyncKeyDisplay">
+                Loading Key...
+            </div>
+            <div class="sync-input-group">
+                <input type="text" class="custom-input" id="linkKeyInput" placeholder="Enter Key from another device...">
+                <button class="btn-sync" onclick="connectToSyncKey()">LINK DEVICE</button>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<!-- HOLOGRAM POPUP MODAL -->
+<!-- HOLOGRAM SYSTEM POPUP MODAL -->
 <div class="system-modal-overlay hidden" id="systemModal">
-    <div class="system-modal-card" id="systemModalCard">
+    <div class="system-modal-card">
         <div class="modal-icon" id="modalIcon">📩</div>
-        <div class="modal-title" id="modalTitle">[ NOTIFICATION ]</div>
-        <div class="modal-body" id="modalBody">A new Daily Quest has arrived.</div>
+        <div class="modal-title" id="modalTitle">[ SYSTEM NOTIFICATION ]</div>
+        <div class="modal-body" id="modalBody">Notification content goes here.</div>
         <button class="btn-modal-close" onclick="closeSystemModal()">ACCEPT</button>
     </div>
 </div>
 
-<script>
+<!-- FIREBASE INTEGRATION & APPLICATION CORE LOGIC -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Global variables provided by platform environment or fallback defaults
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'solo-workout-app-id';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+    let unsubscribeFirestore = null;
+
+    // Web Audio API Synthesizer
+    let audioEnabled = true;
+    window.toggleAudio = function() {
+        audioEnabled = !audioEnabled;
+        document.getElementById('audioBtn').innerText = audioEnabled ? "🔊 SOUND: ON" : "🔇 SOUND: OFF";
+    };
+
     function playBeep(freq = 800, type = 'sine', duration = 0.15) {
+        if (!audioEnabled) return;
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            if (ctx.state === 'suspended') ctx.resume();
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = type;
             osc.frequency.value = freq;
             gain.gain.setValueAtTime(0.1, ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start();
-            osc.stop(ctx.currentTime + duration);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(); osc.stop(ctx.currentTime + duration);
         } catch(e) {}
     }
 
+    // Default Presets
     const mainPresets = {
         w1_2: [
             { text: "Push-ups: 12 - 10 - 10 - 8 - Max", reward: { str: 1 } },
@@ -694,12 +819,18 @@
         { text: "Daily Walk: 10,000 Steps Target", reward: { agi: 2 } }
     ];
 
-    function getTodayString() {
-        return new Date().toISOString().split('T')[0];
+    function getTodayString() { return new Date().toISOString().split('T')[0]; }
+
+    // Persistent Sync Key in LocalStorage so user keeps same identity
+    let syncKey = localStorage.getItem('solo_hunter_sync_key');
+    if (!syncKey) {
+        syncKey = 'hunter_' + Math.random().toString(36).substring(2, 10);
+        localStorage.setItem('solo_hunter_sync_key', syncKey);
     }
 
-    let state = JSON.parse(localStorage.getItem('solo_system_v6')) || {
-        playerName: 'Cihan',
+    // App State
+    let state = JSON.parse(localStorage.getItem('solo_system_v8')) || {
+        playerName: 'Sung Jin-Woo',
         level: 1,
         xp: 0,
         job: 'None',
@@ -708,104 +839,41 @@
         customTasks: [],
         completedToday: [],
         penaltyPool: [],
-        lastActiveDate: getTodayString(),
-        warned2Hours: false
+        historyLogs: {},
+        lastActiveDate: getTodayString()
     };
 
-    // System Notification Functions
-    function triggerSystemNotification(title, body, isWarning = false) {
-        // Hologram Modal
-        const overlay = document.getElementById('systemModal');
-        const card = document.getElementById('systemModalCard');
-        document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalBody').innerText = body;
-        document.getElementById('modalIcon').innerText = isWarning ? '⚠️' : '📩';
-        
-        card.classList.toggle('warning', isWarning);
-        overlay.classList.remove('hidden');
-
-        playBeep(isWarning ? 300 : 900, isWarning ? 'sawtooth' : 'sine', 0.4);
-
-        // Web Notification (Device level)
-        if ("Notification" in window && Notification.permission === "granted") {
-            new Notification(title, {
-                body: body,
-                icon: 'https://cdn-icons-png.flaticon.com/512/2583/2583319.png'
-            });
-        }
-    }
-
-    function closeSystemModal() {
-        playBeep(600, 'sine', 0.1);
-        document.getElementById('systemModal').classList.add('hidden');
-    }
-
-    function requestNotificationPermission() {
-        if ("Notification" in window) {
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    document.getElementById('btnNotifyPerm').innerText = "✅ DEVICE NOTIFICATIONS ACTIVE";
-                    document.getElementById('btnNotifyPerm').style.borderColor = "var(--success-green)";
-                    document.getElementById('btnNotifyPerm').style.color = "var(--success-green)";
-                    triggerSystemNotification("[ SYSTEM ]", "Device notifications activated successfully!");
-                }
-            });
-        }
-    }
-
-    function checkDayRollover() {
-        const today = getTodayString();
-        if (state.lastActiveDate !== today) {
-            const currentPreset = mainPresets[state.program] || [];
-            const allYesterdayTasks = [
-                ...currentPreset.map(t => t.text),
-                ...sidePresets.map(t => t.text),
-                ...state.customTasks.map(t => t.text)
-            ];
-            
-            let failedCount = 0;
-            allYesterdayTasks.forEach(taskText => {
-                if (!state.completedToday.includes(taskText)) {
-                    if (!state.penaltyPool.includes(taskText)) {
-                        state.penaltyPool.push(taskText);
-                        failedCount++;
-                    }
-                }
-            });
-
-            state.completedToday = [];
-            state.lastActiveDate = today;
-            state.warned2Hours = false;
-            saveState();
-
-            if (failedCount > 0) {
-                triggerSystemNotification("🚨 [ PENALTY ASSIGNED ]", `You failed to complete ${failedCount} quest(s). Moved to Penalty Queue!`, true);
-            } else {
-                triggerSystemNotification("📩 [ NEW QUEST HAS ARRIVED ]", "A new Daily Quest is ready. Prepare to train!");
-            }
-        }
-    }
-
-    function saveState() {
-        localStorage.setItem('solo_system_v6', JSON.stringify(state));
-        render();
-    }
-
-    function switchTab(tab) {
+    // Global Window Assignments for HTML Event Handlers
+    window.switchTab = function(tab) {
         playBeep(600, 'sine', 0.08);
         document.getElementById('tabBtnQuest').classList.toggle('active', tab === 'quest');
         document.getElementById('tabBtnStatus').classList.toggle('active', tab === 'status');
+        document.getElementById('tabBtnHistory').classList.toggle('active', tab === 'history');
+        
         document.getElementById('windowQuest').classList.toggle('hidden', tab !== 'quest');
         document.getElementById('windowStatus').classList.toggle('hidden', tab !== 'status');
+        document.getElementById('windowHistory').classList.toggle('hidden', tab !== 'history');
+    };
+
+    window.closeSystemModal = function() {
+        document.getElementById('systemModal').classList.add('hidden');
+    };
+
+    function triggerSystemNotification(title, body, icon = '📩') {
+        document.getElementById('modalIcon').innerText = icon;
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalBody').innerText = body;
+        document.getElementById('systemModal').classList.remove('hidden');
+        playBeep(900, 'sine', 0.3);
     }
 
-    function editPlayerName() {
+    window.editPlayerName = function() {
         const input = prompt("ENTER PLAYER NAME:", state.playerName);
         if (input && input.trim() !== "") {
             state.playerName = input.trim();
             saveState();
         }
-    }
+    };
 
     function getRankTitle(level) {
         if (level >= 30) return "S-Rank Monarch";
@@ -819,9 +887,10 @@
     function checkJobUnlock() {
         if (state.level >= 20 && state.job === 'None') {
             state.job = 'Shadow Monarch';
-            triggerSystemNotification("🔥 JOB CHANGE UNLOCKED", "You are now the [Shadow Monarch]!");
+            triggerSystemNotification("🔥 JOB CHANGE UNLOCKED", "You are now the [Shadow Monarch]!", "👑");
         } else if (state.level >= 10 && state.job === 'None') {
             state.job = 'Necromancer';
+            triggerSystemNotification("💀 JOB CHANGE UNLOCKED", "You are now a [Necromancer]!", "💀");
         }
     }
 
@@ -837,17 +906,17 @@
             state.stats.int += 1;
             state.stats.per += 1;
             checkJobUnlock();
-            triggerSystemNotification("⚡ LEVEL UP!", `Current Level: ${state.level}\nAll Stats Increased by +1!`);
+            triggerSystemNotification("⚡ LEVEL UP!", `Current Level: ${state.level}\nAll Stats Increased by +1!`, "⚡");
         }
         saveState();
     }
 
-    function onProgramChange() {
+    window.onProgramChange = function() {
         state.program = document.getElementById('programSelect').value;
         saveState();
-    }
+    };
 
-    function addCustomTask() {
+    window.addCustomTask = function() {
         const input = document.getElementById('customTaskInput');
         if (input.value.trim() !== '') {
             state.customTasks.push({ text: input.value.trim(), reward: { str: 1, vit: 1 } });
@@ -855,27 +924,85 @@
             playBeep(700, 'sine', 0.1);
             saveState();
         }
-    }
+    };
 
-    function completeTask(taskText, rewardObj) {
+    window.completeTask = function(taskText, rewardObj) {
         if (!state.completedToday.includes(taskText)) {
             state.completedToday.push(taskText);
             
+            // Log History
+            const today = getTodayString();
+            if (!state.historyLogs[today]) state.historyLogs[today] = [];
+            if (!state.historyLogs[today].includes(taskText)) state.historyLogs[today].push(taskText);
+
+            // Apply Rewards
             if (rewardObj) {
-                for (let statKey in rewardObj) {
-                    state.stats[statKey] = (state.stats[statKey] || 10) + rewardObj[statKey];
+                for (let k in rewardObj) {
+                    state.stats[k] = (state.stats[k] || 10) + rewardObj[k];
                 }
             }
-
             addXP(25);
+        }
+    };
+
+    window.payPenalty = function(taskText) {
+        state.penaltyPool = state.penaltyPool.filter(t => t !== taskText);
+        addXP(15);
+    };
+
+    // Midnight Rollover Logic
+    function checkDayRollover() {
+        const today = getTodayString();
+        if (state.lastActiveDate !== today) {
+            const currentPreset = mainPresets[state.program] || [];
+            const allYesterdayTasks = [
+                ...currentPreset.map(t => t.text),
+                ...sidePresets.map(t => t.text),
+                ...state.customTasks.map(t => t.text)
+            ];
+
+            let failedCount = 0;
+            allYesterdayTasks.forEach(taskText => {
+                if (!state.completedToday.includes(taskText)) {
+                    if (!state.penaltyPool.includes(taskText)) {
+                        state.penaltyPool.push(taskText);
+                        failedCount++;
+                    }
+                }
+            });
+
+            state.completedToday = [];
+            state.lastActiveDate = today;
+            saveState();
+
+            if (failedCount > 0) {
+                triggerSystemNotification("🚨 PENALTY ASSIGNED", `${failedCount} uncompleted quest(s) moved to Penalty Queue!`, "🚨");
+            } else {
+                triggerSystemNotification("📩 NEW QUEST ARRIVED", "A new Daily Quest is ready. Prepare to train!", "📜");
+            }
         }
     }
 
-    function payPenalty(taskText) {
-        state.penaltyPool = state.penaltyPool.filter(t => t !== taskText);
-        addXP(15);
+    // Save State (LocalStorage + Firestore Sync)
+    function saveState() {
+        localStorage.setItem('solo_system_v8', JSON.stringify(state));
+        renderUI();
+        syncToFirestore();
     }
 
+    // Connect to Sync Key from another device
+    window.connectToSyncKey = function() {
+        const key = document.getElementById('linkKeyInput').value.trim();
+        if (key) {
+            syncKey = key;
+            localStorage.setItem('solo_hunter_sync_key', syncKey);
+            document.getElementById('userSyncKeyDisplay').innerText = syncKey;
+            setupFirestoreListener();
+            triggerSystemNotification("🔗 LINKED", `Connected to Hunter Sync Key: ${syncKey}`, "✅");
+        }
+    };
+
+    // Render Function
     function renderTaskItem(taskObj, containerEl) {
         const isDone = state.completedToday.includes(taskObj.text);
         const li = document.createElement('li');
@@ -903,7 +1030,7 @@
         containerEl.appendChild(li);
     }
 
-    function render() {
+    function renderUI() {
         document.getElementById('statusName').innerText = state.playerName;
         document.getElementById('statusLevel').innerText = state.level;
         document.getElementById('statusJob').innerText = state.job;
@@ -924,18 +1051,21 @@
         document.getElementById('valPER').innerText = state.stats.per;
 
         document.getElementById('programSelect').value = state.program;
+        document.getElementById('userSyncKeyDisplay').innerText = syncKey;
 
+        // Render Main Goals
         const mainTasks = mainPresets[state.program] || [];
         const mainContainer = document.getElementById('mainTaskList');
         mainContainer.innerHTML = '';
         mainTasks.forEach(t => renderTaskItem(t, mainContainer));
-
         state.customTasks.forEach(t => renderTaskItem(t, mainContainer));
 
+        // Render Side Quests
         const sideContainer = document.getElementById('sideTaskList');
         sideContainer.innerHTML = '';
         sidePresets.forEach(t => renderTaskItem(t, sideContainer));
 
+        // Render Penalty Queue
         const penaltyTaskList = document.getElementById('penaltyTaskList');
         penaltyTaskList.innerHTML = '';
         if (state.penaltyPool.length === 0) {
@@ -953,10 +1083,24 @@
             });
         }
 
-        if ("Notification" in window && Notification.permission === "granted") {
-            document.getElementById('btnNotifyPerm').innerText = "✅ DEVICE NOTIFICATIONS ACTIVE";
-            document.getElementById('btnNotifyPerm').style.borderColor = "var(--success-green)";
-            document.getElementById('btnNotifyPerm').style.color = "var(--success-green)";
+        // Render History Logs
+        const historyContainer = document.getElementById('historyLogList');
+        historyContainer.innerHTML = '';
+        const dates = Object.keys(state.historyLogs || {}).sort().reverse();
+
+        if (dates.length === 0) {
+            historyContainer.innerHTML = '<div style="text-align:center; color:var(--text-dim); font-size:0.88rem; font-family:\'Share Tech Mono\';">No workout history logged yet.</div>';
+        } else {
+            dates.forEach(date => {
+                const card = document.createElement('div');
+                card.className = 'history-card';
+                let itemsHtml = state.historyLogs[date].map(t => `<li>✔ ${t}</li>`).join('');
+                card.innerHTML = `
+                    <div class="history-date">📅 ${date}</div>
+                    <ul class="history-tasks">${itemsHtml}</ul>
+                `;
+                historyContainer.appendChild(card);
+            });
         }
     }
 
@@ -966,16 +1110,7 @@
         midnight.setHours(24, 0, 0, 0);
         const diff = midnight - now;
 
-        if (diff <= 0) {
-            checkDayRollover();
-        }
-
-        // Less than 2 hours warning check (7200000 ms)
-        if (diff <= 7200000 && !state.warned2Hours) {
-            state.warned2Hours = true;
-            saveState();
-            triggerSystemNotification("⚠️ [ WARNING: TIME IS RUNNING OUT ]", "Less than 2 hours remaining to complete today's Daily Quest!", true);
-        }
+        if (diff <= 0) checkDayRollover();
 
         const h = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0');
         const m = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
@@ -983,10 +1118,81 @@
         document.getElementById('timerDisplay').innerText = `REMAINING TIME: ${h}:${m}:${s}`;
     }
 
+    // FIREBASE INITIALIZATION & FIRESTORE REAL-TIME SYNC
+    async function initFirebase() {
+        const dot = document.getElementById('syncDot');
+        const statusText = document.getElementById('syncText');
+
+        if (!firebaseConfig) {
+            dot.className = "sync-dot offline";
+            statusText.innerText = "LOCAL MODE (NO CLOUD CONFIG)";
+            return;
+        }
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            // Auth First Rule
+            if (initialAuthToken) {
+                await signInWithCustomToken(auth, initialAuthToken);
+            } else {
+                await signInAnonymously(auth);
+            }
+
+            currentUser = auth.currentUser;
+            dot.className = "sync-dot online";
+            statusText.innerText = "REALTIME CLOUD SYNC: ACTIVE";
+
+            setupFirestoreListener();
+        } catch (e) {
+            console.error("Firebase init error:", e);
+            dot.className = "sync-dot offline";
+            statusText.innerText = "LOCAL MODE (OFFLINE)";
+        }
+    }
+
+    function setupFirestoreListener() {
+        if (!db || !currentUser) return;
+
+        if (unsubscribeFirestore) unsubscribeFirestore();
+
+        // Mandated Path: /artifacts/{appId}/users/{userId}/data/{syncKey}
+        const stateDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', syncKey);
+
+        unsubscribeFirestore = onSnapshot(stateDocRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const cloudState = docSnap.data();
+                if (cloudState && cloudState.updatedAt) {
+                    state = cloudState.data;
+                    localStorage.setItem('solo_system_v8', JSON.stringify(state));
+                    renderUI();
+                }
+            } else {
+                // Initial upload
+                syncToFirestore();
+            }
+        }, (err) => {
+            console.error("Firestore onSnapshot error:", err);
+        });
+    }
+
+    function syncToFirestore() {
+        if (!db || !currentUser) return;
+        const stateDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', syncKey);
+        setDoc(stateDocRef, {
+            data: state,
+            updatedAt: Date.now()
+        }, { merge: true }).catch(err => console.error("Firestore setDoc error:", err));
+    }
+
+    // Initialize App
     checkDayRollover();
+    renderUI();
     setInterval(updateTimer, 1000);
     updateTimer();
-    render();
+    initFirebase();
 </script>
 
 </body>
