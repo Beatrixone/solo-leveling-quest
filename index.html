@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SYSTEM - SOLO LEVELING WORKOUT</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDKs (Google Cloud) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --bg-color: #030712;
@@ -59,6 +64,13 @@
             text-align: center; font-family: 'Share Tech Mono', monospace; font-size: 1.3rem;
             letter-spacing: 2px; color: var(--primary-cyan); text-shadow: 0 0 10px var(--primary-cyan);
             border-bottom: 1px solid rgba(0, 243, 255, 0.3); padding-bottom: 10px; margin-top: 0; margin-bottom: 15px;
+        }
+
+        .sync-status-bar {
+            text-align: center; font-family: 'Share Tech Mono', monospace; font-size: 0.78rem;
+            color: var(--success-green); margin-bottom: 10px; letter-spacing: 1px;
+            background: rgba(0, 255, 136, 0.08); padding: 4px; border-radius: 4px;
+            border: 1px dashed rgba(0, 255, 136, 0.3);
         }
 
         .day-banner {
@@ -148,6 +160,7 @@
     <div class="system-window" id="windowQuest">
         <h1 class="window-title" id="questMainTitle">[ DAILY QUEST ]</h1>
         
+        <div class="sync-status-bar" id="syncStatusBar">⚡ INITIALIZING CLOUD...</div>
         <div class="day-banner" id="dayBanner">LOADING SYSTEM MODE...</div>
         <div class="timer-display" id="timerDisplay">REMAINING TIME: --:--:--</div>
 
@@ -234,6 +247,27 @@
 </div>
 
 <script>
+    // User's explicit Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyACtV8LQyN1UTCBJ2DT8Q-SXuRu9Tqh5VU",
+      authDomain: "solo-leveling-app-3f5e2.firebaseapp.com",
+      projectId: "solo-leveling-app-3f5e2",
+      storageBucket: "solo-leveling-app-3f5e2.firebasestorage.app",
+      messagingSenderId: "647381973809",
+      appId: "1:647381973809:web:47d4f799903d7e58dece10",
+      measurementId: "G-MGTENB4533"
+    };
+
+    let db = null;
+    try {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        document.getElementById('syncStatusBar').innerText = "🌐 GOOGLE FIREBASE REALTIME SYNC ONLINE";
+    } catch(e) {
+        console.error("Firebase connection error:", e);
+        document.getElementById('syncStatusBar').innerText = "● LOCAL HYBRID STORAGE MODE";
+    }
+
     function playBeep(freq = 800, type = 'sine', duration = 0.15) {
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -248,22 +282,20 @@
     }
 
     const mainRaidPresets = [
-        { text: "Push-ups: 12 - 10 - 10 - 8 - Max (120s Rest)", reward: { str: 1 } },
-        { text: "Neg. Pull-ups: 4 sets x 5 reps (4-5s slow down)", reward: { str: 1, vit: 1 } },
-        { text: "Sit-ups: 3 sets x 15 reps (Squeeze core)", reward: { vit: 1 } },
-        { text: "Squats: 4 sets x 20 reps (Heels down)", reward: { str: 1 } }
+        { id: "main_pushups", text: "Push-ups: 12 - 10 - 10 - 8 - Max (120s Rest)", reward: { str: 1 } },
+        { id: "main_pullups", text: "Neg. Pull-ups: 4 sets x 5 reps (4-5s slow down)", reward: { str: 1, vit: 1 } },
+        { id: "main_situps", text: "Sit-ups: 3 sets x 15 reps (Squeeze core)", reward: { vit: 1 } },
+        { id: "main_squats", text: "Squats: 4 sets x 20 reps (Heels down)", reward: { str: 1 } }
     ];
 
     const sidePresets = [
-        { text: "Hydration: Drink 3.5L Water Minimum", reward: { vit: 2 } },
-        { text: "Supplements: Protein + Creatine + Vitamins", reward: { str: 1, vit: 1 } },
-        { text: "Daily Walk: 10,000 Steps Target", reward: { agi: 2 } },
-        { text: "Passive Buff: Zero Junk Food & Zero Sugar", reward: { vit: 1 } }
+        { id: "side_hydration", text: "Hydration: Drink 3.5L Water Minimum", reward: { vit: 2 } },
+        { id: "side_supplements", text: "Supplements: Protein + Creatine + Vitamins", reward: { str: 1, vit: 1 } },
+        { id: "side_walk", text: "Daily Walk: 10,000 Steps Target", reward: { agi: 2 } }
     ];
 
     function getTodayString() { return new Date().toISOString().split('T')[0]; }
 
-    // Day Detection: 0 = Sun (Raid), 1 = Mon (Rec), 2 = Tue (Raid), 3 = Wed (Rec), 4 = Thu (Raid), 5 = Fri (Rec), 6 = Sat (Rec)
     function isRaidDay() {
         const day = new Date().getDay();
         return (day === 0 || day === 2 || day === 4);
@@ -274,17 +306,45 @@
         return days[new Date().getDay()];
     }
 
-    let state = JSON.parse(localStorage.getItem('solo_system_v8')) || {
-        playerName: 'Cihan',
-        level: 1,
-        xp: 0,
-        job: 'None',
-        stats: { str: 10, vit: 10, agi: 10, int: 10, per: 10 },
-        completedToday: [],
-        penaltyPool: [],
-        historyLogs: {},
-        lastActiveDate: getTodayString()
-    };
+    function loadSavedState() {
+        const keys = ['solo_system_v10', 'solo_system_v9', 'solo_system_v8', 'solo_system_v7', 'solo_system_v6'];
+        for (let k of keys) {
+            const raw = localStorage.getItem(k);
+            if (raw) {
+                try {
+                    let parsed = JSON.parse(raw);
+                    if (parsed && parsed.playerName) return parsed;
+                } catch(e) {}
+            }
+        }
+        return {
+            playerName: 'Cihan',
+            level: 1,
+            xp: 0,
+            job: 'None',
+            stats: { str: 10, vit: 10, agi: 10, int: 10, per: 10 },
+            completedToday: [],
+            penaltyPool: [],
+            historyLogs: {},
+            lastActiveDate: getTodayString()
+        };
+    }
+
+    let state = loadSavedState();
+
+    // Firebase Firestore Realtime Sync Listener
+    if (db) {
+        db.collection("player_profiles").doc("Cihan").onSnapshot((doc) => {
+            if (doc.exists) {
+                const cloudData = doc.data();
+                if (cloudData) {
+                    state = cloudData;
+                    localStorage.setItem('solo_system_v10', JSON.stringify(state));
+                    render();
+                }
+            }
+        }, err => console.log("Realtime sync setup:", err));
+    }
 
     function triggerSystemNotification(title, body) {
         document.getElementById('modalTitle').innerText = title;
@@ -296,6 +356,7 @@
     function closeSystemModal() { document.getElementById('systemModal').classList.add('hidden'); }
 
     function logHistory(dateStr, taskText) {
+        if (!state.historyLogs) state.historyLogs = {};
         if (!state.historyLogs[dateStr]) state.historyLogs[dateStr] = [];
         if (!state.historyLogs[dateStr].includes(taskText)) {
             state.historyLogs[dateStr].push(taskText);
@@ -312,7 +373,10 @@
     }
 
     function saveState() {
-        localStorage.setItem('solo_system_v8', JSON.stringify(state));
+        localStorage.setItem('solo_system_v10', JSON.stringify(state));
+        if (db) {
+            db.collection("player_profiles").doc("Cihan").set(state).catch(err => console.error("Firestore push error:", err));
+        }
         render();
     }
 
@@ -355,14 +419,16 @@
         saveState();
     }
 
-    function completeTask(taskText, rewardObj) {
-        if (!state.completedToday.includes(taskText)) {
-            state.completedToday.push(taskText);
-            logHistory(getTodayString(), taskText);
+    function completeTaskById(taskId) {
+        let taskObj = mainRaidPresets.find(t => t.id === taskId) || sidePresets.find(t => t.id === taskId);
+        if (taskObj && !isTaskCompleted(taskObj)) {
+            if (!state.completedToday) state.completedToday = [];
+            state.completedToday.push(taskObj.id);
+            logHistory(getTodayString(), taskObj.text);
             
-            if (rewardObj) {
-                for (let k in rewardObj) {
-                    state.stats[k] = (state.stats[k] || 10) + rewardObj[k];
+            if (taskObj.reward) {
+                for (let k in taskObj.reward) {
+                    state.stats[k] = (state.stats[k] || 10) + taskObj.reward[k];
                 }
             }
             addXP(25);
@@ -374,8 +440,13 @@
         addXP(15);
     }
 
+    function isTaskCompleted(taskObj) {
+        if (!state.completedToday) return false;
+        return state.completedToday.includes(taskObj.id) || state.completedToday.includes(taskObj.text);
+    }
+
     function renderTaskItem(taskObj, containerEl, isLocked = false) {
-        const isDone = state.completedToday.includes(taskObj.text);
+        const isDone = isTaskCompleted(taskObj);
         const li = document.createElement('li');
         li.className = `task-item ${isLocked ? 'locked' : ''}`;
         if (isDone) li.style.opacity = '0.5';
@@ -392,7 +463,7 @@
             </div>
             <div class="task-actions">
                 ${isLocked ? '<span style="color:var(--danger-red); font-family: Share Tech Mono; font-size:0.8rem;">🔒 LOCKED</span>' : (
-                    !isDone ? `<button class="btn-act btn-act-check" onclick='completeTask("${taskObj.text}", ${JSON.stringify(taskObj.reward)})'>✔</button>` :
+                    !isDone ? `<button class="btn-act btn-act-check" onclick="completeTaskById('${taskObj.id}')">✔</button>` :
                     '<span style="color:var(--success-green); font-family: Share Tech Mono; font-weight:bold;">CLEARED</span>'
                 )}
             </div>
@@ -401,7 +472,6 @@
     }
 
     function render() {
-        // Render Banner
         const dayBanner = document.getElementById('dayBanner');
         const raidActive = isRaidDay();
         if (raidActive) {
@@ -412,40 +482,36 @@
             dayBanner.innerText = `🛡️ TODAY: ${getDayName()} - RECOVERY DAY (RECOVERY & AGILITY)`;
         }
 
-        // Status Render
-        document.getElementById('statusName').innerText = state.playerName;
-        document.getElementById('statusLevel').innerText = state.level;
-        document.getElementById('statusJob').innerText = state.job;
-        document.getElementById('statusTitle').innerText = getRankTitle(state.level);
+        document.getElementById('statusName').innerText = state.playerName || 'Cihan';
+        document.getElementById('statusLevel').innerText = state.level || 1;
+        document.getElementById('statusJob').innerText = state.job || 'None';
+        document.getElementById('statusTitle').innerText = getRankTitle(state.level || 1);
 
-        document.getElementById('barFillXP').style.width = state.xp + '%';
-        document.getElementById('barTextXP').innerText = `${state.xp}/100`;
+        document.getElementById('barFillXP').style.width = (state.xp || 0) + '%';
+        document.getElementById('barTextXP').innerText = `${state.xp || 0}/100`;
 
-        const maxHP = state.stats.vit * 10;
-        const maxMP = state.stats.int * 2;
+        const maxHP = (state.stats.vit || 10) * 10;
+        const maxMP = (state.stats.int || 10) * 2;
         document.getElementById('barTextHP').innerText = `${maxHP}/${maxHP}`;
         document.getElementById('barTextMP').innerText = `${maxMP}/${maxMP}`;
 
-        document.getElementById('valSTR').innerText = state.stats.str;
-        document.getElementById('valVIT').innerText = state.stats.vit;
-        document.getElementById('valAGI').innerText = state.stats.agi;
-        document.getElementById('valINT').innerText = state.stats.int;
-        document.getElementById('valPER').innerText = state.stats.per;
+        document.getElementById('valSTR').innerText = state.stats.str || 10;
+        document.getElementById('valVIT').innerText = state.stats.vit || 10;
+        document.getElementById('valAGI').innerText = state.stats.agi || 10;
+        document.getElementById('valINT').innerText = state.stats.int || 10;
+        document.getElementById('valPER').innerText = state.stats.per || 10;
 
-        // Render Main Goals (Locked on Recovery Days)
         const mainContainer = document.getElementById('mainTaskList');
         mainContainer.innerHTML = '';
         mainRaidPresets.forEach(t => renderTaskItem(t, mainContainer, !raidActive));
 
-        // Render Side Quests
         const sideContainer = document.getElementById('sideTaskList');
         sideContainer.innerHTML = '';
         sidePresets.forEach(t => renderTaskItem(t, sideContainer, false));
 
-        // Render Penalty Queue
         const penaltyTaskList = document.getElementById('penaltyTaskList');
         penaltyTaskList.innerHTML = '';
-        if (state.penaltyPool.length === 0) {
+        if (!state.penaltyPool || state.penaltyPool.length === 0) {
             penaltyTaskList.innerHTML = '<li style="font-size:0.85rem; color:var(--text-dim); text-align:center;">No pending penalties. Keep it up!</li>';
         } else {
             state.penaltyPool.forEach(taskText => {
@@ -460,17 +526,17 @@
             });
         }
 
-        // Render History Logs
         const historyContainer = document.getElementById('historyLogList');
         historyContainer.innerHTML = '';
-        const dates = Object.keys(state.historyLogs).sort().reverse();
+        const dates = state.historyLogs ? Object.keys(state.historyLogs).sort().reverse() : [];
         if (dates.length === 0) {
             historyContainer.innerHTML = '<div style="text-align:center; color:var(--text-dim); font-size:0.9rem;">No workout history recorded yet.</div>';
         } else {
             dates.forEach(date => {
                 const card = document.createElement('div');
                 card.className = 'history-card';
-                let itemsHtml = state.historyLogs[date].map(t => `<li>✔ ${t}</li>`).join('');
+                const uniqueLogs = [...new Set(state.historyLogs[date])];
+                let itemsHtml = uniqueLogs.map(t => `<li>✔ ${t}</li>`).join('');
                 card.innerHTML = `<div class="history-date">📅 ${date}</div><ul class="history-tasks">${itemsHtml}</ul>`;
                 historyContainer.appendChild(card);
             });
