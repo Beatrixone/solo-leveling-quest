@@ -1,23 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SYSTEM - SOLO LEVELING WORKOUT</title>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Custom Sci-Fi HUD Styles -->
     <style>
         :root {
             --bg-color: #030712;
-            --panel-bg: rgba(6, 18, 38, 0.92);
+            --panel-bg: rgba(6, 18, 38, 0.88);
             --primary-cyan: #00f3ff;
             --glow-cyan: rgba(0, 243, 255, 0.4);
             --danger-red: #ff0055;
@@ -29,609 +20,147 @@
             --border-glow: 0 0 15px var(--glow-cyan);
         }
 
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; user-select: none; }
 
         body {
             background-color: var(--bg-color);
             background-image: 
-                radial-gradient(circle at 50% 15%, rgba(0, 243, 255, 0.15) 0%, transparent 65%),
-                radial-gradient(circle at 80% 85%, rgba(255, 0, 85, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 20%, rgba(0, 243, 255, 0.12) 0%, transparent 60%),
                 linear-gradient(to bottom, #02050e, #050d1a);
             color: var(--text-main);
             font-family: 'Rajdhani', sans-serif;
             min-height: 100vh;
             margin: 0;
-            padding: 12px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        .system-container {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        /* SYNC HEADER BANNER */
-        .sync-banner {
-            background: rgba(4, 16, 33, 0.9);
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            border-radius: 6px;
-            padding: 8px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.8rem;
-        }
-
-        .sync-status {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .sync-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--gold-yellow);
-        }
-
-        .sync-dot.online {
-            background: var(--success-green);
-            box-shadow: 0 0 8px var(--success-green);
-            animation: pulse 2s infinite;
-        }
-
-        .sync-dot.offline {
-            background: var(--danger-red);
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        /* NAVIGATION TABS */
-        .nav-tabs {
-            display: flex;
-            gap: 6px;
-            width: 100%;
-        }
+        .system-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 15px; }
+        .nav-tabs { display: flex; gap: 8px; width: 100%; }
 
         .tab-btn {
-            flex: 1;
-            background: rgba(8, 28, 54, 0.85);
-            border: 1px solid var(--primary-cyan);
-            color: var(--primary-cyan);
-            padding: 10px 4px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.88rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-            cursor: pointer;
-            border-radius: 6px;
-            text-transform: uppercase;
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            flex: 1; background: rgba(8, 28, 54, 0.8); border: 1px solid var(--primary-cyan);
+            color: var(--primary-cyan); padding: 10px 4px; font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem; font-weight: bold; letter-spacing: 1px; cursor: pointer; border-radius: 4px;
+            text-transform: uppercase; box-shadow: 0 0 10px rgba(0, 243, 255, 0.15); transition: all 0.2s ease;
         }
 
-        .tab-btn.active {
-            background: rgba(0, 243, 255, 0.25);
-            color: #fff;
-            box-shadow: var(--border-glow);
-            border-width: 2px;
-        }
+        .tab-btn.active { background: rgba(0, 243, 255, 0.25); color: #fff; box-shadow: var(--border-glow); border-width: 2px; }
 
-        /* SYSTEM HOLOGRAM WINDOW */
         .system-window {
-            background: var(--panel-bg);
-            border: 2px solid var(--primary-cyan);
-            box-shadow: var(--border-glow), inset 0 0 20px rgba(0, 243, 255, 0.08);
-            border-radius: 10px;
-            padding: 18px;
-            position: relative;
-            backdrop-filter: blur(10px);
+            background: var(--panel-bg); border: 2px solid var(--primary-cyan);
+            box-shadow: var(--border-glow), inset 0 0 20px rgba(0, 243, 255, 0.1);
+            border-radius: 8px; padding: 20px; position: relative; backdrop-filter: blur(8px);
         }
 
         .window-title {
-            text-align: center;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1.35rem;
-            letter-spacing: 3px;
-            color: var(--primary-cyan);
-            text-shadow: 0 0 10px var(--primary-cyan);
-            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
-            padding-bottom: 8px;
-            margin-top: 0;
-            margin-bottom: 14px;
-            text-transform: uppercase;
+            text-align: center; font-family: 'Share Tech Mono', monospace; font-size: 1.3rem;
+            letter-spacing: 2px; color: var(--primary-cyan); text-shadow: 0 0 10px var(--primary-cyan);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3); padding-bottom: 10px; margin-top: 0; margin-bottom: 15px;
         }
 
-        /* STATUS TAB STYLES */
-        .status-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-            background: rgba(0, 243, 255, 0.04);
-            padding: 10px 14px;
-            border-radius: 6px;
-            border: 1px dashed rgba(0, 243, 255, 0.3);
+        .day-banner {
+            text-align: center; font-family: 'Share Tech Mono', monospace; padding: 8px;
+            border-radius: 4px; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px;
+        }
+        .banner-raid { background: rgba(255, 0, 85, 0.15); border: 1px solid var(--danger-red); color: var(--danger-red); }
+        .banner-recovery { background: rgba(0, 255, 136, 0.15); border: 1px solid var(--success-green); color: var(--success-green); }
+
+        .timer-display {
+            text-align: center; font-family: 'Share Tech Mono', monospace; font-size: 1.1rem;
+            color: var(--primary-cyan); background: rgba(0, 243, 255, 0.05); padding: 8px;
+            border-radius: 4px; border: 1px solid rgba(0, 243, 255, 0.2); margin-bottom: 15px;
         }
 
-        .level-number {
-            font-size: 3.2rem;
-            font-family: 'Share Tech Mono', monospace;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 15px var(--primary-cyan);
-            line-height: 1;
+        .goals-title { font-family: 'Share Tech Mono', monospace; color: var(--success-green); letter-spacing: 2px; font-size: 1.05rem; margin-top: 15px; margin-bottom: 10px; }
+        .task-list { list-style: none; padding: 0; margin: 0 0 15px 0; display: flex; flex-direction: column; gap: 8px; }
+        
+        .task-item {
+            background: rgba(12, 32, 60, 0.7); border: 1px solid rgba(0, 243, 255, 0.2);
+            padding: 10px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;
         }
+        .task-item.locked { opacity: 0.4; border-color: rgba(255,255,255,0.1); }
 
-        .level-label {
-            font-size: 0.8rem;
-            color: var(--primary-cyan);
-            letter-spacing: 2px;
-            font-family: 'Share Tech Mono', monospace;
-        }
+        .task-text-container { display: flex; flex-direction: column; }
+        .task-text { font-size: 0.95rem; font-weight: 600; }
+        .task-stat-reward { font-size: 0.75rem; color: var(--gold-yellow); font-family: 'Share Tech Mono', monospace; }
 
-        .job-title-box {
-            text-align: right;
-            font-size: 0.95rem;
-        }
+        .btn-act { border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-family: 'Share Tech Mono', monospace; cursor: pointer; font-size: 0.9rem; }
+        .btn-act-check { background: var(--success-green); color: #000; box-shadow: 0 0 8px rgba(0, 255, 136, 0.4); }
 
-        .job-title-row {
-            margin-bottom: 3px;
-        }
+        /* STATUS STYLES */
+        .status-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(0, 243, 255, 0.05); padding: 10px 14px; border-radius: 6px; border: 1px dashed rgba(0, 243, 255, 0.3); }
+        .level-number { font-size: 3rem; font-family: 'Share Tech Mono', monospace; font-weight: bold; color: #fff; text-shadow: 0 0 15px var(--primary-cyan); line-height: 1; }
+        .level-label { font-size: 0.85rem; color: var(--primary-cyan); letter-spacing: 2px; }
+        .job-title-box { text-align: right; font-size: 0.95rem; }
+        .val-highlight { color: #fff; font-weight: bold; text-shadow: 0 0 8px var(--primary-cyan); }
 
-        .val-highlight {
-            color: #fff;
-            font-weight: bold;
-            text-shadow: 0 0 8px var(--primary-cyan);
-        }
-
-        .player-name-edit {
-            cursor: pointer;
-            border-bottom: 1px dotted var(--primary-cyan);
-        }
-
-        .stat-bar-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-
-        .stat-bar-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .stat-bar-label {
-            width: 70px;
-            font-weight: bold;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.9rem;
-        }
-
-        .stat-bar-bg {
-            flex: 1;
-            height: 14px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            border-radius: 7px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .stat-bar-fill {
-            height: 100%;
-            transition: width 0.4s ease;
-        }
-
+        .stat-bar-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .stat-bar-container { display: flex; align-items: center; gap: 10px; }
+        .stat-bar-label { width: 70px; font-weight: bold; font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; }
+        .stat-bar-bg { flex: 1; height: 14px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 7px; overflow: hidden; }
+        .stat-bar-fill { height: 100%; transition: width 0.4s ease; }
         .fill-hp { background: linear-gradient(90deg, #ff0055, #ff5500); }
         .fill-mp { background: linear-gradient(90deg, #0088ff, #00f3ff); }
         .fill-fatigue { background: linear-gradient(90deg, #ffcc00, #ff8800); }
         .fill-xp { background: linear-gradient(90deg, #00ff88, #00f3ff); }
+        .stat-bar-text { width: 75px; text-align: right; font-family: 'Share Tech Mono', monospace; font-size: 0.85rem; color: var(--text-dim); }
 
-        .stat-bar-text {
-            width: 75px;
-            text-align: right;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--text-dim);
-        }
+        .attributes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .attr-card { background: rgba(10, 30, 60, 0.6); border: 1px solid rgba(0, 243, 255, 0.25); padding: 10px 12px; border-radius: 6px; }
+        .attr-info { display: flex; align-items: center; gap: 8px; width: 100%; justify-content: space-between; }
+        .attr-name { font-family: 'Share Tech Mono', monospace; font-weight: bold; font-size: 1.1rem; color: var(--primary-cyan); }
+        .attr-value { font-size: 1.3rem; font-weight: bold; color: #fff; }
+        .stat-auto-tag { font-size: 0.75rem; color: var(--success-green); font-family: 'Share Tech Mono', monospace; }
 
-        .attributes-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .attr-card {
-            background: rgba(10, 30, 60, 0.6);
-            border: 1px solid rgba(0, 243, 255, 0.25);
-            padding: 10px 12px;
-            border-radius: 6px;
-        }
-
-        .attr-info {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            justify-content: space-between;
-        }
-
-        .attr-name {
-            font-family: 'Share Tech Mono', monospace;
-            font-weight: bold;
-            font-size: 1.05rem;
-            color: var(--primary-cyan);
-        }
-
-        .attr-value {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .stat-auto-tag {
-            font-size: 0.72rem;
-            color: var(--success-green);
-            font-family: 'Share Tech Mono', monospace;
-            display: block;
-        }
-
-        /* QUEST TAB STYLES */
-        .quest-sub-header {
-            text-align: center;
-            color: var(--gold-yellow);
-            font-family: 'Share Tech Mono', monospace;
-            letter-spacing: 2px;
-            font-size: 0.92rem;
-            margin-bottom: 10px;
-        }
-
-        .timer-display {
-            text-align: center;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1.15rem;
-            color: var(--primary-cyan);
-            background: rgba(0, 243, 255, 0.05);
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            margin-bottom: 14px;
-        }
-
-        .program-selector {
-            width: 100%;
-            background: #08162b;
-            border: 1px solid var(--primary-cyan);
-            color: var(--text-main);
-            padding: 9px;
-            border-radius: 6px;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.95rem;
-            font-weight: bold;
-            margin-bottom: 14px;
-            outline: none;
-        }
-
-        .goals-title {
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--success-green);
-            letter-spacing: 2px;
-            font-size: 1.05rem;
-            margin-top: 14px;
-            margin-bottom: 8px;
-        }
-
-        .task-list {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 12px 0;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .task-item {
-            background: rgba(12, 32, 60, 0.75);
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            padding: 10px 12px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .task-text-container {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .task-text {
-            font-size: 0.98rem;
-            font-weight: 600;
-        }
-
-        .task-stat-reward {
-            font-size: 0.72rem;
-            color: var(--gold-yellow);
-            font-family: 'Share Tech Mono', monospace;
-        }
-
-        .btn-act {
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-family: 'Share Tech Mono', monospace;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: transform 0.1s;
-        }
-
-        .btn-act:active { transform: scale(0.92); }
-
-        .btn-act-check {
-            background: var(--success-green);
-            color: #000;
-            box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
-        }
-
-        .add-custom-box {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .custom-input {
-            flex: 1;
-            background: #08162b;
-            border: 1px solid rgba(0, 243, 255, 0.4);
-            color: #fff;
-            padding: 9px;
-            border-radius: 6px;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        .btn-add-task {
-            background: var(--primary-cyan);
-            color: #000;
-            border: none;
-            padding: 0 16px;
-            font-weight: bold;
-            font-family: 'Share Tech Mono', monospace;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .caution-box {
-            border: 1px solid var(--danger-red);
-            background: rgba(255, 0, 85, 0.08);
-            padding: 10px;
-            border-radius: 6px;
-            text-align: center;
-            font-size: 0.82rem;
-            color: #ff88a5;
-            font-family: 'Share Tech Mono', monospace;
-            line-height: 1.35;
-        }
-
-        .penalty-pool-box {
-            margin-top: 16px;
-            border-top: 2px dashed var(--danger-red);
-            padding-top: 12px;
-        }
-
-        .penalty-pool-title {
-            color: var(--danger-red);
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1.05rem;
-            letter-spacing: 2px;
-            margin-bottom: 8px;
-        }
-
-        /* HISTORY & SYNC LINK STYLES */
-        .history-card {
-            background: rgba(8, 24, 48, 0.8);
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-        }
-
-        .history-date {
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--primary-cyan);
-            font-weight: bold;
-            margin-bottom: 6px;
-            font-size: 0.95rem;
-            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
-            padding-bottom: 4px;
-        }
-
-        .history-tasks {
-            list-style: none;
-            padding-left: 10px;
-            margin: 0;
-            font-size: 0.88rem;
-            color: var(--text-main);
-        }
-
+        /* HISTORY STYLES */
+        .history-card { background: rgba(8, 24, 48, 0.8); border: 1px solid rgba(0, 243, 255, 0.2); padding: 12px; border-radius: 6px; margin-bottom: 10px; }
+        .history-date { font-family: 'Share Tech Mono', monospace; color: var(--primary-cyan); font-weight: bold; margin-bottom: 6px; font-size: 1rem; border-bottom: 1px solid rgba(0, 243, 255, 0.1); padding-bottom: 4px; }
+        .history-tasks { list-style: none; padding-left: 10px; margin: 0; font-size: 0.88rem; color: var(--text-main); }
         .history-tasks li { margin-bottom: 3px; }
 
-        .sync-link-card {
-            background: rgba(0, 243, 255, 0.05);
-            border: 1px dashed var(--primary-cyan);
-            border-radius: 6px;
-            padding: 12px;
-            margin-top: 15px;
-        }
+        .caution-box { border: 1px solid var(--danger-red); background: rgba(255, 0, 85, 0.08); padding: 10px; border-radius: 6px; text-align: center; font-size: 0.85rem; color: #ff88a5; font-family: 'Share Tech Mono', monospace; }
+        .penalty-pool-box { margin-top: 20px; border-top: 2px dashed var(--danger-red); padding-top: 15px; }
+        .penalty-pool-title { color: var(--danger-red); font-family: 'Share Tech Mono', monospace; font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 10px; }
 
-        .sync-link-title {
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--gold-yellow);
-            font-size: 0.9rem;
-            margin-bottom: 6px;
-        }
+        .system-modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 20px; }
+        .system-modal-card { background: rgba(6, 20, 45, 0.95); border: 2px solid var(--primary-cyan); box-shadow: 0 0 30px var(--glow-cyan); border-radius: 10px; max-width: 400px; width: 100%; padding: 25px; text-align: center; }
+        .btn-modal-close { background: var(--primary-cyan); color: #000; border: none; padding: 10px 25px; font-family: 'Share Tech Mono', monospace; font-size: 1rem; font-weight: bold; border-radius: 4px; cursor: pointer; }
 
-        .sync-input-group {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .btn-sync {
-            background: rgba(0, 243, 255, 0.2);
-            border: 1px solid var(--primary-cyan);
-            color: #fff;
-            padding: 8px 12px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.85rem;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        /* HOLOGRAM POPUP MODAL */
-        .system-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            padding: 20px;
-        }
-
-        .system-modal-card {
-            background: rgba(6, 20, 45, 0.95);
-            border: 2px solid var(--primary-cyan);
-            box-shadow: 0 0 30px var(--glow-cyan);
-            border-radius: 10px;
-            max-width: 400px;
-            width: 100%;
-            padding: 24px;
-            text-align: center;
-        }
-
-        .modal-icon {
-            font-size: 3rem;
-            margin-bottom: 8px;
-        }
-
-        .modal-title {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1.25rem;
-            color: var(--primary-cyan);
-            margin-bottom: 12px;
-            letter-spacing: 2px;
-        }
-
-        .modal-body {
-            margin-bottom: 20px;
-            color: #fff;
-            font-size: 0.98rem;
-            line-height: 1.4;
-        }
-
-        .btn-modal-close {
-            background: var(--primary-cyan);
-            color: #000;
-            border: none;
-            padding: 10px 25px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            box-shadow: 0 0 10px var(--primary-cyan);
-        }
-
+        .player-name-edit { cursor: pointer; text-decoration: underline dotted; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
 <div class="system-container">
-
-    <!-- REALTIME SYNC STATUS BANNER -->
-    <div class="sync-banner">
-        <div class="sync-status">
-            <span class="sync-dot" id="syncDot"></span>
-            <span id="syncText">CLOUD: INITIALIZING...</span>
-        </div>
-        <button onclick="toggleAudio()" id="audioBtn" style="background:none; border:none; color:var(--primary-cyan); cursor:pointer; font-family:'Share Tech Mono'; font-size:0.8rem;">
-            🔊 SOUND: ON
-        </button>
-    </div>
     
-    <!-- NAVIGATION TABS -->
+    <!-- Tab Navigation -->
     <div class="nav-tabs">
-        <button class="tab-btn active" id="tabBtnQuest" onclick="switchTab('quest')"><i class="fa-solid fa-scroll"></i> QUEST</button>
-        <button class="tab-btn" id="tabBtnStatus" onclick="switchTab('status')"><i class="fa-solid fa-chart-simple"></i> STATUS</button>
-        <button class="tab-btn" id="tabBtnHistory" onclick="switchTab('history')"><i class="fa-solid fa-calendar-days"></i> HISTORY</button>
+        <button class="tab-btn active" id="tabBtnQuest" onclick="switchTab('quest')">📜 QUEST</button>
+        <button class="tab-btn" id="tabBtnStatus" onclick="switchTab('status')">📊 STATUS</button>
+        <button class="tab-btn" id="tabBtnHistory" onclick="switchTab('history')">📅 HISTORY</button>
     </div>
 
     <!-- QUEST WINDOW -->
     <div class="system-window" id="windowQuest">
-        <h1 class="window-title">[ DAILY QUEST ]</h1>
-        <div class="quest-sub-header">PREPARE TO BECOME POWERFUL</div>
+        <h1 class="window-title" id="questMainTitle">[ DAILY QUEST ]</h1>
+        
+        <div class="day-banner" id="dayBanner">LOADING SYSTEM MODE...</div>
         <div class="timer-display" id="timerDisplay">REMAINING TIME: --:--:--</div>
 
-        <!-- Workout Program Selector -->
-        <label style="font-size:0.82rem; color:var(--text-dim); display:block; margin-bottom:4px; font-family:'Share Tech Mono';">PROGRAM MODE:</label>
-        <select class="program-selector" id="programSelect" onchange="onProgramChange()">
-            <option value="w1_2">Weeks 1-2: Adaptation (4 Sets Neg. Pull-ups)</option>
-            <option value="w3_4">Weeks 3-4: Volume Build (Australian + Neg.)</option>
-            <option value="w5_6">Weeks 5-6: Pull-up Breakthrough (1 Clean + Neg.)</option>
-            <option value="w7_8">Weeks 7-8: Peak Test (Max Pull-ups)</option>
-        </select>
-
-        <!-- Custom Task Adder -->
-        <div class="add-custom-box">
-            <input type="text" class="custom-input" id="customTaskInput" placeholder="Add custom goal...">
-            <button class="btn-add-task" onclick="addCustomTask()">ADD</button>
-        </div>
-
-        <div class="goals-title">🎯 MAIN WORKOUT GOALS</div>
+        <div class="goals-title">⚔️ MAIN WORKOUT GOALS</div>
         <ul class="task-list" id="mainTaskList"></ul>
 
         <div class="goals-title" style="color: var(--gold-yellow);">➕ SIDE QUESTS</div>
         <ul class="task-list" id="sideTaskList"></ul>
 
-        <!-- Caution Banner -->
         <div class="caution-box">
-            ⚠️ <b>CAUTION!</b> IF THE DAILY QUEST REMAINS INCOMPLETE AT MIDNIGHT, PENALTIES WILL BE ASSIGNED AUTOMATICALLY.
+            ⚠️ <b>CAUTION!</b> UNFINISHED TASKS AT MIDNIGHT WILL BE SENT TO THE PENALTY QUEUE.
         </div>
 
-        <!-- Penalty Queue -->
         <div class="penalty-pool-box">
             <div class="penalty-pool-title">🚨 PENALTY QUEUE</div>
             <ul class="task-list" id="penaltyTaskList"></ul>
@@ -648,13 +177,12 @@
                 <div class="level-label">LEVEL</div>
             </div>
             <div class="job-title-box">
-                <div class="job-title-row">NAME: <span class="val-highlight player-name-edit" onclick="editPlayerName()" id="statusName">Hunter</span> ✏️</div>
+                <div class="job-title-row">NAME: <span class="val-highlight player-name-edit" onclick="editPlayerName()" id="statusName">Cihan</span> ✏️</div>
                 <div class="job-title-row">JOB: <span class="val-highlight" id="statusJob">None</span></div>
                 <div class="job-title-row">TITLE: <span class="val-highlight" id="statusTitle">E-Rank Hunter</span></div>
             </div>
         </div>
 
-        <!-- Vital Stats Bars -->
         <div class="stat-bar-group">
             <div class="stat-bar-container">
                 <div class="stat-bar-label" style="color:var(--success-green)">EXP</div>
@@ -678,106 +206,40 @@
             </div>
         </div>
 
-        <!-- Attribute Matrix -->
         <div class="attributes-grid">
-            <div class="attr-card">
-                <div class="attr-info">
-                    <span class="attr-name">STR <span class="stat-auto-tag">[POWER]</span></span>
-                    <span class="attr-value" id="valSTR">10</span>
-                </div>
-            </div>
-            <div class="attr-card">
-                <div class="attr-info">
-                    <span class="attr-name">VIT <span class="stat-auto-tag">[HEALTH]</span></span>
-                    <span class="attr-value" id="valVIT">10</span>
-                </div>
-            </div>
-            <div class="attr-card">
-                <div class="attr-info">
-                    <span class="attr-name">AGI <span class="stat-auto-tag">[SPEED]</span></span>
-                    <span class="attr-value" id="valAGI">10</span>
-                </div>
-            </div>
-            <div class="attr-card">
-                <div class="attr-info">
-                    <span class="attr-name">INT <span class="stat-auto-tag">[MANA]</span></span>
-                    <span class="attr-value" id="valINT">10</span>
-                </div>
-            </div>
-            <div class="attr-card" style="grid-column: span 2;">
-                <div class="attr-info">
-                    <span class="attr-name">PER <span class="stat-auto-tag">[SENSE]</span></span>
-                    <span class="attr-value" id="valPER">10</span>
-                </div>
-            </div>
+            <div class="attr-card"><div class="attr-info"><span class="attr-name">STR <span class="stat-auto-tag">[POWER]</span></span><span class="attr-value" id="valSTR">10</span></div></div>
+            <div class="attr-card"><div class="attr-info"><span class="attr-name">VIT <span class="stat-auto-tag">[HEALTH]</span></span><span class="attr-value" id="valVIT">10</span></div></div>
+            <div class="attr-card"><div class="attr-info"><span class="attr-name">AGI <span class="stat-auto-tag">[SPEED]</span></span><span class="attr-value" id="valAGI">10</span></div></div>
+            <div class="attr-card"><div class="attr-info"><span class="attr-name">INT <span class="stat-auto-tag">[MANA]</span></span><span class="attr-value" id="valINT">10</span></div></div>
+            <div class="attr-card" style="grid-column: span 2;"><div class="attr-info"><span class="attr-name">PER <span class="stat-auto-tag">[SENSE]</span></span><span class="attr-value" id="valPER">10</span></div></div>
         </div>
     </div>
 
-    <!-- HISTORY & DEVICE SYNC LINK WINDOW -->
+    <!-- HISTORY WINDOW -->
     <div class="system-window hidden" id="windowHistory">
         <h1 class="window-title">[ WORKOUT HISTORY ]</h1>
         <div id="historyLogList"></div>
-
-        <!-- DEVICE LINKING / CLOUD KEY -->
-        <div class="sync-link-card">
-            <div class="sync-link-title">🔗 CROSS-DEVICE SYNC KEY</div>
-            <div style="font-size:0.8rem; color:var(--text-dim); margin-bottom:8px;">
-                Use this Hunter Key to sync your progress live across Phone, Tablet, and PC:
-            </div>
-            <div style="font-family:'Share Tech Mono'; font-size:1rem; color:#fff; word-break:break-all; background:rgba(0,0,0,0.4); padding:8px; border-radius:4px;" id="userSyncKeyDisplay">
-                Loading Key...
-            </div>
-            <div class="sync-input-group">
-                <input type="text" class="custom-input" id="linkKeyInput" placeholder="Enter Key from another device...">
-                <button class="btn-sync" onclick="connectToSyncKey()">LINK DEVICE</button>
-            </div>
-        </div>
     </div>
 
 </div>
 
-<!-- HOLOGRAM SYSTEM POPUP MODAL -->
+<!-- MODAL POPUP -->
 <div class="system-modal-overlay hidden" id="systemModal">
     <div class="system-modal-card">
-        <div class="modal-icon" id="modalIcon">📩</div>
-        <div class="modal-title" id="modalTitle">[ SYSTEM NOTIFICATION ]</div>
-        <div class="modal-body" id="modalBody">Notification content goes here.</div>
+        <div style="font-size: 3rem; margin-bottom: 10px;" id="modalIcon">📩</div>
+        <div style="font-family:'Share Tech Mono'; font-size:1.2rem; color:var(--primary-cyan); margin-bottom:15px;" id="modalTitle">[ NOTIFICATION ]</div>
+        <div style="margin-bottom:20px; color:#fff;" id="modalBody">Notification text.</div>
         <button class="btn-modal-close" onclick="closeSystemModal()">ACCEPT</button>
     </div>
 </div>
 
-<!-- FIREBASE INTEGRATION & APPLICATION CORE LOGIC -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    // Global variables provided by platform environment or fallback defaults
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'solo-workout-app-id';
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-    let db = null;
-    let auth = null;
-    let currentUser = null;
-    let unsubscribeFirestore = null;
-
-    // Web Audio API Synthesizer
-    let audioEnabled = true;
-    window.toggleAudio = function() {
-        audioEnabled = !audioEnabled;
-        document.getElementById('audioBtn').innerText = audioEnabled ? "🔊 SOUND: ON" : "🔇 SOUND: OFF";
-    };
-
+<script>
     function playBeep(freq = 800, type = 'sine', duration = 0.15) {
-        if (!audioEnabled) return;
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            if (ctx.state === 'suspended') ctx.resume();
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
-            osc.type = type;
-            osc.frequency.value = freq;
+            osc.type = type; osc.frequency.value = freq;
             gain.gain.setValueAtTime(0.1, ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
             osc.connect(gain); gain.connect(ctx.destination);
@@ -785,66 +247,76 @@
         } catch(e) {}
     }
 
-    // Default Presets
-    const mainPresets = {
-        w1_2: [
-            { text: "Push-ups: 12 - 10 - 10 - 8 - Max", reward: { str: 1 } },
-            { text: "Neg. Pull-ups: 4 sets x 5 reps", reward: { str: 1, vit: 1 } },
-            { text: "Sit-ups: 3 sets x 15 reps", reward: { vit: 1 } },
-            { text: "Squats: 4 sets x 20 reps", reward: { str: 1 } }
-        ],
-        w3_4: [
-            { text: "Push-ups: 18 - 15 - 12 - 10 - Max", reward: { str: 2 } },
-            { text: "Australian + Neg. Pull-ups: 3x8 / 3x5", reward: { str: 1, vit: 1 } },
-            { text: "Sit-ups: 4 sets x 20 reps", reward: { vit: 1 } },
-            { text: "Squats: 4 sets x 25 reps", reward: { str: 2 } }
-        ],
-        w5_6: [
-            { text: "Push-ups: 15 - 20 - 25 - 20 - Max", reward: { str: 2 } },
-            { text: "Clean Pull-up + Negatives: 4 sets", reward: { str: 2, vit: 1 } },
-            { text: "Sit-ups: 4 sets x 25 reps", reward: { vit: 2 } },
-            { text: "Squats: 4 sets x 30 reps", reward: { str: 2 } }
-        ],
-        w7_8: [
-            { text: "Push-ups: 35 - 25 - 20 - 15 - Max", reward: { str: 3 } },
-            { text: "Clean Pull-ups: 4 sets (Max)", reward: { str: 3, vit: 2 } },
-            { text: "Sit-ups: 4 sets x 30 reps", reward: { vit: 2 } },
-            { text: "Squats: 4 sets x 35 reps", reward: { str: 3 } }
-        ]
-    };
+    const mainRaidPresets = [
+        { text: "Push-ups: 12 - 10 - 10 - 8 - Max (120s Rest)", reward: { str: 1 } },
+        { text: "Neg. Pull-ups: 4 sets x 5 reps (4-5s slow down)", reward: { str: 1, vit: 1 } },
+        { text: "Sit-ups: 3 sets x 15 reps (Squeeze core)", reward: { vit: 1 } },
+        { text: "Squats: 4 sets x 20 reps (Heels down)", reward: { str: 1 } }
+    ];
 
     const sidePresets = [
-        { text: "Hydration: Drink 3.5L Water", reward: { vit: 2 } },
+        { text: "Hydration: Drink 3.5L Water Minimum", reward: { vit: 2 } },
         { text: "Supplements: Protein + Creatine + Vitamins", reward: { str: 1, vit: 1 } },
-        { text: "Daily Walk: 10,000 Steps Target", reward: { agi: 2 } }
+        { text: "Daily Walk: 10,000 Steps Target", reward: { agi: 2 } },
+        { text: "Passive Buff: Zero Junk Food & Zero Sugar", reward: { vit: 1 } }
     ];
 
     function getTodayString() { return new Date().toISOString().split('T')[0]; }
 
-    // Persistent Sync Key in LocalStorage so user keeps same identity
-    let syncKey = localStorage.getItem('solo_hunter_sync_key');
-    if (!syncKey) {
-        syncKey = 'hunter_' + Math.random().toString(36).substring(2, 10);
-        localStorage.setItem('solo_hunter_sync_key', syncKey);
+    // Day Detection: 0 = Sun (Raid), 1 = Mon (Rec), 2 = Tue (Raid), 3 = Wed (Rec), 4 = Thu (Raid), 5 = Fri (Rec), 6 = Sat (Rec)
+    function isRaidDay() {
+        const day = new Date().getDay();
+        return (day === 0 || day === 2 || day === 4);
     }
 
-    // App State
+    function getDayName() {
+        const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+        return days[new Date().getDay()];
+    }
+
     let state = JSON.parse(localStorage.getItem('solo_system_v8')) || {
-        playerName: 'Sung Jin-Woo',
+        playerName: 'Cihan',
         level: 1,
         xp: 0,
         job: 'None',
         stats: { str: 10, vit: 10, agi: 10, int: 10, per: 10 },
-        program: 'w1_2',
-        customTasks: [],
         completedToday: [],
         penaltyPool: [],
         historyLogs: {},
         lastActiveDate: getTodayString()
     };
 
-    // Global Window Assignments for HTML Event Handlers
-    window.switchTab = function(tab) {
+    function triggerSystemNotification(title, body) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalBody').innerText = body;
+        document.getElementById('systemModal').classList.remove('hidden');
+        playBeep(900, 'sine', 0.3);
+    }
+
+    function closeSystemModal() { document.getElementById('systemModal').classList.add('hidden'); }
+
+    function logHistory(dateStr, taskText) {
+        if (!state.historyLogs[dateStr]) state.historyLogs[dateStr] = [];
+        if (!state.historyLogs[dateStr].includes(taskText)) {
+            state.historyLogs[dateStr].push(taskText);
+        }
+    }
+
+    function checkDayRollover() {
+        const today = getTodayString();
+        if (state.lastActiveDate !== today) {
+            state.completedToday = [];
+            state.lastActiveDate = today;
+            saveState();
+        }
+    }
+
+    function saveState() {
+        localStorage.setItem('solo_system_v8', JSON.stringify(state));
+        render();
+    }
+
+    function switchTab(tab) {
         playBeep(600, 'sine', 0.08);
         document.getElementById('tabBtnQuest').classList.toggle('active', tab === 'quest');
         document.getElementById('tabBtnStatus').classList.toggle('active', tab === 'status');
@@ -853,27 +325,15 @@
         document.getElementById('windowQuest').classList.toggle('hidden', tab !== 'quest');
         document.getElementById('windowStatus').classList.toggle('hidden', tab !== 'status');
         document.getElementById('windowHistory').classList.toggle('hidden', tab !== 'history');
-    };
-
-    window.closeSystemModal = function() {
-        document.getElementById('systemModal').classList.add('hidden');
-    };
-
-    function triggerSystemNotification(title, body, icon = '📩') {
-        document.getElementById('modalIcon').innerText = icon;
-        document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalBody').innerText = body;
-        document.getElementById('systemModal').classList.remove('hidden');
-        playBeep(900, 'sine', 0.3);
     }
 
-    window.editPlayerName = function() {
+    function editPlayerName() {
         const input = prompt("ENTER PLAYER NAME:", state.playerName);
         if (input && input.trim() !== "") {
             state.playerName = input.trim();
             saveState();
         }
-    };
+    }
 
     function getRankTitle(level) {
         if (level >= 30) return "S-Rank Monarch";
@@ -884,58 +344,22 @@
         return "E-Rank Hunter";
     }
 
-    function checkJobUnlock() {
-        if (state.level >= 20 && state.job === 'None') {
-            state.job = 'Shadow Monarch';
-            triggerSystemNotification("🔥 JOB CHANGE UNLOCKED", "You are now the [Shadow Monarch]!", "👑");
-        } else if (state.level >= 10 && state.job === 'None') {
-            state.job = 'Necromancer';
-            triggerSystemNotification("💀 JOB CHANGE UNLOCKED", "You are now a [Necromancer]!", "💀");
-        }
-    }
-
     function addXP(amount) {
         state.xp += amount;
-        playBeep(900, 'square', 0.2);
         if (state.xp >= 100) {
             state.level += Math.floor(state.xp / 100);
             state.xp = state.xp % 100;
-            state.stats.str += 1;
-            state.stats.vit += 1;
-            state.stats.agi += 1;
-            state.stats.int += 1;
-            state.stats.per += 1;
-            checkJobUnlock();
-            triggerSystemNotification("⚡ LEVEL UP!", `Current Level: ${state.level}\nAll Stats Increased by +1!`, "⚡");
+            state.stats.str += 1; state.stats.vit += 1; state.stats.agi += 1; state.stats.int += 1; state.stats.per += 1;
+            triggerSystemNotification("⚡ LEVEL UP!", `Current Level: ${state.level}\nAll Stats Increased by +1!`);
         }
         saveState();
     }
 
-    window.onProgramChange = function() {
-        state.program = document.getElementById('programSelect').value;
-        saveState();
-    };
-
-    window.addCustomTask = function() {
-        const input = document.getElementById('customTaskInput');
-        if (input.value.trim() !== '') {
-            state.customTasks.push({ text: input.value.trim(), reward: { str: 1, vit: 1 } });
-            input.value = '';
-            playBeep(700, 'sine', 0.1);
-            saveState();
-        }
-    };
-
-    window.completeTask = function(taskText, rewardObj) {
+    function completeTask(taskText, rewardObj) {
         if (!state.completedToday.includes(taskText)) {
             state.completedToday.push(taskText);
+            logHistory(getTodayString(), taskText);
             
-            // Log History
-            const today = getTodayString();
-            if (!state.historyLogs[today]) state.historyLogs[today] = [];
-            if (!state.historyLogs[today].includes(taskText)) state.historyLogs[today].push(taskText);
-
-            // Apply Rewards
             if (rewardObj) {
                 for (let k in rewardObj) {
                     state.stats[k] = (state.stats[k] || 10) + rewardObj[k];
@@ -943,77 +367,22 @@
             }
             addXP(25);
         }
-    };
+    }
 
-    window.payPenalty = function(taskText) {
+    function payPenalty(taskText) {
         state.penaltyPool = state.penaltyPool.filter(t => t !== taskText);
         addXP(15);
-    };
-
-    // Midnight Rollover Logic
-    function checkDayRollover() {
-        const today = getTodayString();
-        if (state.lastActiveDate !== today) {
-            const currentPreset = mainPresets[state.program] || [];
-            const allYesterdayTasks = [
-                ...currentPreset.map(t => t.text),
-                ...sidePresets.map(t => t.text),
-                ...state.customTasks.map(t => t.text)
-            ];
-
-            let failedCount = 0;
-            allYesterdayTasks.forEach(taskText => {
-                if (!state.completedToday.includes(taskText)) {
-                    if (!state.penaltyPool.includes(taskText)) {
-                        state.penaltyPool.push(taskText);
-                        failedCount++;
-                    }
-                }
-            });
-
-            state.completedToday = [];
-            state.lastActiveDate = today;
-            saveState();
-
-            if (failedCount > 0) {
-                triggerSystemNotification("🚨 PENALTY ASSIGNED", `${failedCount} uncompleted quest(s) moved to Penalty Queue!`, "🚨");
-            } else {
-                triggerSystemNotification("📩 NEW QUEST ARRIVED", "A new Daily Quest is ready. Prepare to train!", "📜");
-            }
-        }
     }
 
-    // Save State (LocalStorage + Firestore Sync)
-    function saveState() {
-        localStorage.setItem('solo_system_v8', JSON.stringify(state));
-        renderUI();
-        syncToFirestore();
-    }
-
-    // Connect to Sync Key from another device
-    window.connectToSyncKey = function() {
-        const key = document.getElementById('linkKeyInput').value.trim();
-        if (key) {
-            syncKey = key;
-            localStorage.setItem('solo_hunter_sync_key', syncKey);
-            document.getElementById('userSyncKeyDisplay').innerText = syncKey;
-            setupFirestoreListener();
-            triggerSystemNotification("🔗 LINKED", `Connected to Hunter Sync Key: ${syncKey}`, "✅");
-        }
-    };
-
-    // Render Function
-    function renderTaskItem(taskObj, containerEl) {
+    function renderTaskItem(taskObj, containerEl, isLocked = false) {
         const isDone = state.completedToday.includes(taskObj.text);
         const li = document.createElement('li');
-        li.className = 'task-item';
+        li.className = `task-item ${isLocked ? 'locked' : ''}`;
         if (isDone) li.style.opacity = '0.5';
 
         let rewardStr = [];
         if (taskObj.reward) {
-            for (let k in taskObj.reward) {
-                rewardStr.push(`+${taskObj.reward[k]} ${k.toUpperCase()}`);
-            }
+            for (let k in taskObj.reward) rewardStr.push(`+${taskObj.reward[k]} ${k.toUpperCase()}`);
         }
 
         li.innerHTML = `
@@ -1022,15 +391,28 @@
                 <span class="task-stat-reward">${rewardStr.join(' | ')}</span>
             </div>
             <div class="task-actions">
-                ${!isDone ? `
-                    <button class="btn-act btn-act-check" onclick='completeTask("${taskObj.text}", ${JSON.stringify(taskObj.reward)})'>✔</button>
-                ` : '<span style="color:var(--success-green); font-family: Share Tech Mono; font-weight:bold;">CLEARED</span>'}
+                ${isLocked ? '<span style="color:var(--danger-red); font-family: Share Tech Mono; font-size:0.8rem;">🔒 LOCKED</span>' : (
+                    !isDone ? `<button class="btn-act btn-act-check" onclick='completeTask("${taskObj.text}", ${JSON.stringify(taskObj.reward)})'>✔</button>` :
+                    '<span style="color:var(--success-green); font-family: Share Tech Mono; font-weight:bold;">CLEARED</span>'
+                )}
             </div>
         `;
         containerEl.appendChild(li);
     }
 
-    function renderUI() {
+    function render() {
+        // Render Banner
+        const dayBanner = document.getElementById('dayBanner');
+        const raidActive = isRaidDay();
+        if (raidActive) {
+            dayBanner.className = "day-banner banner-raid";
+            dayBanner.innerText = `⚔️ TODAY: ${getDayName()} - RAID DAY (DAILY QUEST: BREAK THE LIMIT)`;
+        } else {
+            dayBanner.className = "day-banner banner-recovery";
+            dayBanner.innerText = `🛡️ TODAY: ${getDayName()} - RECOVERY DAY (RECOVERY & AGILITY)`;
+        }
+
+        // Status Render
         document.getElementById('statusName').innerText = state.playerName;
         document.getElementById('statusLevel').innerText = state.level;
         document.getElementById('statusJob').innerText = state.job;
@@ -1050,20 +432,15 @@
         document.getElementById('valINT').innerText = state.stats.int;
         document.getElementById('valPER').innerText = state.stats.per;
 
-        document.getElementById('programSelect').value = state.program;
-        document.getElementById('userSyncKeyDisplay').innerText = syncKey;
-
-        // Render Main Goals
-        const mainTasks = mainPresets[state.program] || [];
+        // Render Main Goals (Locked on Recovery Days)
         const mainContainer = document.getElementById('mainTaskList');
         mainContainer.innerHTML = '';
-        mainTasks.forEach(t => renderTaskItem(t, mainContainer));
-        state.customTasks.forEach(t => renderTaskItem(t, mainContainer));
+        mainRaidPresets.forEach(t => renderTaskItem(t, mainContainer, !raidActive));
 
         // Render Side Quests
         const sideContainer = document.getElementById('sideTaskList');
         sideContainer.innerHTML = '';
-        sidePresets.forEach(t => renderTaskItem(t, sideContainer));
+        sidePresets.forEach(t => renderTaskItem(t, sideContainer, false));
 
         // Render Penalty Queue
         const penaltyTaskList = document.getElementById('penaltyTaskList');
@@ -1086,19 +463,15 @@
         // Render History Logs
         const historyContainer = document.getElementById('historyLogList');
         historyContainer.innerHTML = '';
-        const dates = Object.keys(state.historyLogs || {}).sort().reverse();
-
+        const dates = Object.keys(state.historyLogs).sort().reverse();
         if (dates.length === 0) {
-            historyContainer.innerHTML = '<div style="text-align:center; color:var(--text-dim); font-size:0.88rem; font-family:\'Share Tech Mono\';">No workout history logged yet.</div>';
+            historyContainer.innerHTML = '<div style="text-align:center; color:var(--text-dim); font-size:0.9rem;">No workout history recorded yet.</div>';
         } else {
             dates.forEach(date => {
                 const card = document.createElement('div');
                 card.className = 'history-card';
                 let itemsHtml = state.historyLogs[date].map(t => `<li>✔ ${t}</li>`).join('');
-                card.innerHTML = `
-                    <div class="history-date">📅 ${date}</div>
-                    <ul class="history-tasks">${itemsHtml}</ul>
-                `;
+                card.innerHTML = `<div class="history-date">📅 ${date}</div><ul class="history-tasks">${itemsHtml}</ul>`;
                 historyContainer.appendChild(card);
             });
         }
@@ -1118,81 +491,10 @@
         document.getElementById('timerDisplay').innerText = `REMAINING TIME: ${h}:${m}:${s}`;
     }
 
-    // FIREBASE INITIALIZATION & FIRESTORE REAL-TIME SYNC
-    async function initFirebase() {
-        const dot = document.getElementById('syncDot');
-        const statusText = document.getElementById('syncText');
-
-        if (!firebaseConfig) {
-            dot.className = "sync-dot offline";
-            statusText.innerText = "LOCAL MODE (NO CLOUD CONFIG)";
-            return;
-        }
-
-        try {
-            const app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-
-            // Auth First Rule
-            if (initialAuthToken) {
-                await signInWithCustomToken(auth, initialAuthToken);
-            } else {
-                await signInAnonymously(auth);
-            }
-
-            currentUser = auth.currentUser;
-            dot.className = "sync-dot online";
-            statusText.innerText = "REALTIME CLOUD SYNC: ACTIVE";
-
-            setupFirestoreListener();
-        } catch (e) {
-            console.error("Firebase init error:", e);
-            dot.className = "sync-dot offline";
-            statusText.innerText = "LOCAL MODE (OFFLINE)";
-        }
-    }
-
-    function setupFirestoreListener() {
-        if (!db || !currentUser) return;
-
-        if (unsubscribeFirestore) unsubscribeFirestore();
-
-        // Mandated Path: /artifacts/{appId}/users/{userId}/data/{syncKey}
-        const stateDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', syncKey);
-
-        unsubscribeFirestore = onSnapshot(stateDocRef, (docSnap) => {
-            if (docSnap.exists()) {
-                const cloudState = docSnap.data();
-                if (cloudState && cloudState.updatedAt) {
-                    state = cloudState.data;
-                    localStorage.setItem('solo_system_v8', JSON.stringify(state));
-                    renderUI();
-                }
-            } else {
-                // Initial upload
-                syncToFirestore();
-            }
-        }, (err) => {
-            console.error("Firestore onSnapshot error:", err);
-        });
-    }
-
-    function syncToFirestore() {
-        if (!db || !currentUser) return;
-        const stateDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', syncKey);
-        setDoc(stateDocRef, {
-            data: state,
-            updatedAt: Date.now()
-        }, { merge: true }).catch(err => console.error("Firestore setDoc error:", err));
-    }
-
-    // Initialize App
     checkDayRollover();
-    renderUI();
     setInterval(updateTimer, 1000);
     updateTimer();
-    initFirebase();
+    render();
 </script>
 
 </body>
